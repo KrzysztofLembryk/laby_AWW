@@ -27,94 +27,6 @@ def make_soup_obj(page):
     return soup
 
 
-def find_list_of_info(soup, div: str, cls: str, what_to_find: str):
-    res = soup.find_all(div, class_=cls)
-    res_lst = list()
-
-    for elem in res:
-        res_lst.append(elem.find_all(what_to_find))
-
-    return res_lst
-
-
-# Imiona sa postaci "cos spacja imie spacja nazwisko spacja - cos"
-def extract_name(line: str):
-    first_space = False
-    res_str = ""
-
-    for i in range(len(line)):
-        if not first_space:
-            if line[i] == " ":
-                first_space = True
-        else:
-            if line[i] == "-":
-                break
-            res_str = res_str + line[i]
-
-    if res_str[len(res_str) - 1] == " ":
-        return res_str[:(len(res_str) - 1)]
-    else:
-        return res_str
-
-
-def get_lst_of_names(lst_of_tiktokers):
-    lst_of_names = list()
-    for elem in lst_of_tiktokers:
-        lst_of_names.append(extract_name(elem.text))
-
-    return lst_of_names
-
-
-def find_paragraph_for_each_tiktoker(lst_of_names, all_paragraphs):
-    name_idx = 0
-    good_paragraphs = list()
-
-    for paragraph_idx in range(len(all_paragraphs)):
-        if name_idx < len(lst_of_names) and \
-                lst_of_names[name_idx] in all_paragraphs[paragraph_idx].text:
-            good_paragraphs.append(all_paragraphs[paragraph_idx].text)
-            name_idx += 1
-
-    return good_paragraphs
-
-
-class Description:
-    name: str
-    description: str
-
-    def __init__(self, name, description):
-        self.name = name
-        self.description = description
-
-
-def find_additional_info_for_tiktokers_without_description(name: str):
-    res = g_search.search("youtube " + name, num_results=1, sleep_interval=5)
-    url = ""
-
-    for result in res:
-        url = result
-        if "youtube" in url:
-            break
-
-    vid_url = "[![video](""https://img.youtube.com/vi/" + url + \
-              "/0.jpg)]"
-    vid_url += "(https://www.youtube.com/watch?v=" + url + ")"
-
-    return vid_url
-
-
-def connect_names_and_descriptions(lst_of_tiktokers, good_paragraphs):
-    res_lst = list()
-    for name, descr in zip(lst_of_tiktokers, good_paragraphs):
-        if len(descr) < 50:
-            descr = extract_name(descr)
-            url = find_additional_info_for_tiktokers_without_description(descr)
-            descr += "\n"
-            descr += url + "\n"
-        res_lst.append(Description(name.text, descr))
-    return res_lst
-
-
 def init_markdown(name: str, draft: str, first_page: bool):
     markdown = "+++\n"
     markdown += "title = " + "'" + name + "'\n"
@@ -150,26 +62,20 @@ def make_df_to_markdown(save_path: str, ref_path: str, df: pd.DataFrame):
         markdown += f"Place in {df.columns[0]} is: {row[df.columns[0]]}<br />"
         markdown += f"in {df.columns[1]} was: {row[df.columns[1]]}<br />"
         markdown += f"RATING: {row['Ratings']}<br />"
-        markdown += f"CHANGE: {row['Change']}\n"
-
-    with open(save_path, 'w') as md:
-        md.write(markdown)
-
-
-def make_scrapped_lsts_to_markdown(name_descr_lst, save_path: str, ref_path: str):
-    markdown = init_markdown(name="Most famous TikTokers", draft="false",
-                             first_page=False)
-
-    for elem in name_descr_lst:
-        print("NAME: ", extract_name(elem.name).replace(" ", "_"))
-        markdown += "## " + elem.name + "\n"
-        markdown += f"- " + elem.description + "\n\n"
+        markdown += f"CHANGE: {row['Change']}<br />"
         markdown += "[more info]({{< relref " + ref_path + \
-                    extract_name(elem.name).replace(" ", "_").replace("’",
-                                                                      "_") + '.md" >}})\n'
+                    row["Programming Language"].replace(" ", "_") + '.md" >}})\n'
 
     with open(save_path, 'w') as md:
         md.write(markdown)
+
+
+def get_language_names(df: pd.DataFrame):
+    name_lst = list()
+    for index, row in df.iterrows():
+        name_lst.append(row["Programming Language"].replace(" ", "_").replace("/", "_"))
+
+    return name_lst
 
 
 def get_first_paragraph_from_page(url):
@@ -191,11 +97,14 @@ def get_first_paragraph_from_page(url):
     return res_paragraph
 
 
-def google_search_info_about_tiktokers(lst_of_names, save_path: str):
+def google_search_more_info(lst_of_names, save_path: str):
     for name in lst_of_names:
         print("Searching info for: ", name)
         markdown = init_markdown(name=name, draft="false", first_page=False)
-        res = g_search.search("wikipedia " + name, num_results=1, sleep_interval=5)
+        if name == "Go":
+            name = name + " language"
+
+        res = g_search.search("wikipedia " + name)
         wiki_url = ""
 
         for result in res:
@@ -206,8 +115,7 @@ def google_search_info_about_tiktokers(lst_of_names, save_path: str):
         markdown += (paragraph + "\n")
         markdown += f"**MORE INFO AT:** {wiki_url}\n"
 
-        with open(save_path + "tiktoker_" + name.replace(" ", "_").replace("’", "_") +
-                  ".md", 'w', encoding="utf-8") as md:
+        with open(save_path + name + ".md", 'w', encoding="utf-8") as md:
             md.write(markdown)
 
 
@@ -216,6 +124,7 @@ def find_col_names(soup_table):
     res_lst = list()
     first = True
     for name in cols:
+        # nie chcemy pierwszego change bo tam albo nic nie ma albo sa strzalki img
         if name.text == "Change" and first:
             first = False
         else:
@@ -254,7 +163,6 @@ def make_df_from_soup_table(soup_table, col_names):
     return df
 
 
-
 def main():
     page = get_html_page(url=URL)
     soup = make_soup_obj(page)
@@ -271,7 +179,7 @@ def main():
 
     col_names = find_col_names(soup_table=soup_table)
     df = make_df_from_soup_table(soup_table, col_names)
-
+    name_lst = get_language_names(df)
 
     save_path_front = 'my_site/content/posts/front.md'
     ref_path_front = '"/pages/tiktokers.md"'
@@ -284,9 +192,9 @@ def main():
     make_front_page_to_markdown(save_path=os.getcwd() + "\\front.md",
                                 ref_path=ref_path_front,
                                 name_and_month=h1_month.text, intro=intro)
-    make_df_to_markdown(save_path=os.getcwd() + "\\scrapped_lst.md",
+    make_df_to_markdown(save_path=os.getcwd() + "\\scrapped_programming_languages.md",
                         ref_path=ref_path_lsts, df=df)
-    # google_search_info_about_tiktokers(lst_of_names, save_path_google_search)
+    google_search_more_info(name_lst, os.getcwd() + "\\")
 
 
 main()
