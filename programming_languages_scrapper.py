@@ -27,24 +27,22 @@ def make_soup_obj(page):
     return soup
 
 
-def init_markdown(name: str, draft: str, first_page: bool):
-    markdown = "+++\n"
-    markdown += "title = " + "'" + name + "'\n"
-    markdown += "draft = " + draft + "\n"
+def init_markdown(name: str, draft: str, layout: str):
+    markdown = "---\n"
+    markdown += "title: " + name + "\n"
+    markdown += "draft: " + draft + "\n"
+    markdown += "layout: " + layout + "\n"
+    markdown += "---\n"
 
-    if first_page:
-        markdown += "date = 2024-03-03T14:27:01+01:00\n"
-
-    markdown += "+++\n"
     return markdown
 
 
 def make_front_page_to_markdown(save_path: str, ref_path: str, name_and_month: str,
                                 intro: str):
-    markdown = init_markdown(name="INTRO", draft="false", first_page=True)
+    markdown = init_markdown(name="INTRO", draft="false", layout="home")
 
     markdown += f"\nHere is a site about {name_and_month}\n\n"
-    markdown += f"**Quick intro**: {intro}"
+    markdown += f"**Quick intro**: {intro}\n"
     markdown += "[MoreInfo]({{< relref " + ref_path + " >}})\n"
 
     with open(save_path, 'w') as md:
@@ -52,7 +50,7 @@ def make_front_page_to_markdown(save_path: str, ref_path: str, name_and_month: s
 
 
 def make_df_to_markdown(save_path: str, ref_path: str, df: pd.DataFrame):
-    #markdown = init_markdown(name="INTRO", draft="false", first_page=False)
+    markdown = init_markdown(name="Scrapped DATA", draft="false", layout="page")
     markdown = "# LIST OF PROGRAMMING LANGUAGES\n"
     # col: [Feb 2024, Feb 2023, Programming Language, Ratings, Change, Image_URL
     for index, row in df.iterrows():
@@ -100,7 +98,7 @@ def get_first_paragraph_from_page(url):
 def google_search_more_info(lst_of_names, save_path: str):
     for name in lst_of_names:
         print("Searching info for: ", name)
-        markdown = init_markdown(name=name, draft="false", first_page=False)
+        markdown = init_markdown(name=name, draft="false", layout="page")
         if name == "Go":
             name = name + " language"
 
@@ -181,20 +179,20 @@ def main():
     df = make_df_from_soup_table(soup_table, col_names)
     name_lst = get_language_names(df)
 
-    save_path_front = 'my_site/content/posts/front.md'
-    ref_path_front = '"/pages/tiktokers.md"'
+    save_path_front = 'my_prog_lang_site/index.md'
+    ref_path_front = '"my_prog_lang_site/lang_lst.md"'
 
-    save_path_lsts = 'my_site/content/pages/tiktokers.md'
-    ref_path_lsts = '"/posts/tiktoker_post/tiktoker_'
+    save_path_lsts = 'my_prog_lang_site/lang_lst.md'
+    ref_path_lsts = '"my_prog_lang_site/my_pages/'
 
-    save_path_google_search = os.getcwd() + "\\my_site\\content\\posts\\tiktoker_post"
+    save_path_google_search = os.getcwd() + "\\my_prog_lang_site\\my_pages\\"
 
-    make_front_page_to_markdown(save_path=os.getcwd() + "\\front.md",
+    make_front_page_to_markdown(save_path=save_path_front,
                                 ref_path=ref_path_front,
                                 name_and_month=h1_month.text, intro=intro)
-    make_df_to_markdown(save_path=os.getcwd() + "\\scrapped_programming_languages.md",
+    make_df_to_markdown(save_path=save_path_lsts,
                         ref_path=ref_path_lsts, df=df)
-    google_search_more_info(name_lst, os.getcwd() + "\\")
+    google_search_more_info(name_lst, save_path_google_search)
 
 
 main()
