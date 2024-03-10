@@ -43,7 +43,9 @@ def make_front_page_to_markdown(save_path: str, ref_path: str, name_and_month: s
 
     markdown += f"\nHere is a site about {name_and_month}\n\n"
     markdown += f"**Quick intro**: {intro}\n"
-    markdown += "[MoreInfo]({{< relref " + ref_path + " >}})\n"
+    markdown += "[MoreInfo]({% link " + ref_path + " %})\n"
+    markdown += "![Alt text](https://www.creativefabrica.com/wp-content/uploads/2022/09/" \
+                "20/Pink-lama-Cute-baby-girl-alpaca-charact-Graphics-38925359-1-1-580x387.png)"
 
     with open(save_path, 'w') as md:
         md.write(markdown)
@@ -51,7 +53,7 @@ def make_front_page_to_markdown(save_path: str, ref_path: str, name_and_month: s
 
 def make_df_to_markdown(save_path: str, ref_path: str, df: pd.DataFrame):
     markdown = init_markdown(name="Scrapped DATA", draft="false", layout="page")
-    markdown = "# LIST OF PROGRAMMING LANGUAGES\n"
+    markdown += "# LIST OF PROGRAMMING LANGUAGES\n"
     # col: [Feb 2024, Feb 2023, Programming Language, Ratings, Change, Image_URL
     for index, row in df.iterrows():
         markdown += "## " + row["Programming Language"] + "\n"
@@ -61,8 +63,9 @@ def make_df_to_markdown(save_path: str, ref_path: str, df: pd.DataFrame):
         markdown += f"in {df.columns[1]} was: {row[df.columns[1]]}<br />"
         markdown += f"RATING: {row['Ratings']}<br />"
         markdown += f"CHANGE: {row['Change']}<br />"
-        markdown += "[more info]({{< relref " + ref_path + \
-                    row["Programming Language"].replace(" ", "_") + '.md" >}})\n'
+        markdown += "[more info]({% link " + ref_path + \
+                    row["Programming Language"].replace(" ", "_").replace("/",
+                                                                          "_") + '.md %})\n'
 
     with open(save_path, 'w') as md:
         md.write(markdown)
@@ -100,9 +103,9 @@ def google_search_more_info(lst_of_names, save_path: str):
         print("Searching info for: ", name)
         markdown = init_markdown(name=name, draft="false", layout="page")
         if name == "Go":
-            name = name + " language"
-
-        res = g_search.search("wikipedia " + name)
+            res = g_search.search("wikipedia " + name + " language")
+        else:
+            res = g_search.search("wikipedia " + name)
         wiki_url = ""
 
         for result in res:
@@ -111,7 +114,7 @@ def google_search_more_info(lst_of_names, save_path: str):
 
         paragraph = get_first_paragraph_from_page(wiki_url)
         markdown += (paragraph + "\n")
-        markdown += f"**MORE INFO AT:** {wiki_url}\n"
+        markdown += f"**MORE INFO AT:** [LINK]({wiki_url})\n"
 
         with open(save_path + name + ".md", 'w', encoding="utf-8") as md:
             md.write(markdown)
@@ -180,18 +183,18 @@ def main():
     name_lst = get_language_names(df)
 
     save_path_front = 'my_prog_lang_site/index.md'
-    ref_path_front = '"my_prog_lang_site/lang_lst.md"'
+    ref_path_front = 'lang_lst.md'
 
-    save_path_lsts = 'my_prog_lang_site/lang_lst.md'
-    ref_path_lsts = '"my_prog_lang_site/my_pages/'
+    save_path_df = 'my_prog_lang_site/lang_lst.md'
+    ref_path_df = 'my_pages/'
 
     save_path_google_search = os.getcwd() + "\\my_prog_lang_site\\my_pages\\"
 
     make_front_page_to_markdown(save_path=save_path_front,
                                 ref_path=ref_path_front,
                                 name_and_month=h1_month.text, intro=intro)
-    make_df_to_markdown(save_path=save_path_lsts,
-                        ref_path=ref_path_lsts, df=df)
+    make_df_to_markdown(save_path=save_path_df,
+                        ref_path=ref_path_df, df=df)
     google_search_more_info(name_lst, save_path_google_search)
 
 
