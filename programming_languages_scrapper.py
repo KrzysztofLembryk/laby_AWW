@@ -32,6 +32,8 @@ def init_markdown(name: str, draft: str, layout: str):
     markdown += "title: " + name + "\n"
     markdown += "draft: " + draft + "\n"
     markdown += "layout: " + layout + "\n"
+    if layout == "home":
+        markdown += "permalink: https://krzysztoflembryk.github.io/\n"
     markdown += "---\n"
 
     return markdown
