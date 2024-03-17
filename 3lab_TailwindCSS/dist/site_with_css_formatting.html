@@ -3,6 +3,13 @@
     <head>
         <meta charset="UTF-8">
         <link rel="stylesheet" href="style.css">
+        <style>
+           .flex-container {
+            display: flex;
+            gap: 10px;
+            /* Set the desired spacing between flex items */
+        } 
+        </style>
     </head>
 <header>
     Moja druga strona napisana ręcznie w HTML.
@@ -79,7 +86,7 @@
 
     <!-- This is an ordered list (<ol>) with type "i", which means the list items will be marked with lowercase Roman numerals. -->
     <h3 class="text-purple-800">Lista języków programowania:</h3>
-    <ol class="upper-roman"> 
+    <ol class="list-decimal"> 
         <li>C++</li>
         <li>Java</li>
         <li>Python</li>
@@ -98,7 +105,8 @@
     <img src="https://i.pinimg.com/736x/5f/e4/5c/5fe45c1bd0162cc1a40e096ae1d33831.jpg" alt="W3Schools.com" width="104" height="142">
 
     <!-- Podpunkt 5) Uzycie tagu form -->
-    <form>
+    
+    <form class="border">
         <h3>Formularz odnośnie ulubionych języków programowania:</h3>
         <label for="name">Twoje imię:</label>
         <input type="text" id="name" name="name" required><br><br>
@@ -132,7 +140,7 @@
             <p>Java is a popular programming language that is widely used for developing various applications, including web, mobile, and desktop applications. It is known for its platform independence, robustness, and scalability. Java has a large community and a vast ecosystem of libraries and frameworks, making it a versatile choice for developers.</p>
         </details>
     </p>
-
+    <br>
     <!-- Podpunkt 7) Uzycie tagu progress -->
     <p>
         Użycie tagu progress:
@@ -141,6 +149,39 @@
     <progress id="progres" value="22" max="100"></progress>
 
     <br>
+    <br>
+    <!-- UŻYWANIE FLEXA -->
+    <h3 class="text-blue-500">Using Flexbox for rows:</h3>
+    <div class="flex-container">
+        <div class="border">Now I'm going to use flex. </div>
+        <div class="border">To make elements next to each other</div>
+        <div class="border">in a row :) </div>
+    </div>
+    
+    <br>
+
+    <h3 class="text-purple-950"> Using Flexbox columns</h3>
+    <div class="flex flex-col"> 
+        <div class="border flex-auto w-64">(flex-auto w-64) Now I'm going to use flex. </div>
+        <div class="border flex-auto w-32">(flex-auto w-32) To make elements below each other</div>
+        <div class="border flex-none">(flex-none) in a column :) </div>
+        <div class="border flex-none w-20 h-15">(flex-none w-20 h-15) whaaaaaaaat</div>
+    </div>
+    <br>
+    <!-- Div z flex col i button który też jest w div i ma flex ale center -->
+    <div class="flex flex-col">
+        <p>
+            Przykładowy tekst jakiś tam.
+        </p>
+        <br>
+        <div class="flex max-w-40 justify-center">
+            <button class="bg-sky-400 hover:bg-purple-700">
+                BUTTON
+            </button>
+        </div>
+    </div>
+    <br>
+
     <!-- Podpunkt 8) Uzycie MAP i AREA -->
     <p>
         Użycie map i area:
