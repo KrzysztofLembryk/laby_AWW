@@ -552,6 +552,11 @@ video {
   border-width: 1px;
 }
 
+.bg-orange-300 {
+  --tw-bg-opacity: 1;
+  background-color: rgb(253 186 116 / var(--tw-bg-opacity));
+}
+
 .lowercase {
   text-transform: lowercase;
 }
