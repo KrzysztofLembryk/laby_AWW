@@ -7,19 +7,21 @@
 <header>
     Moja druga strona napisana ręcznie w HTML.
 </header>
+<br>
 <article>
     <h1 class="bg-orange-300">
         nagłówek h1
     </h1>
-    <p>
+    <p class="text-cyan-500 bg-black">
         Jakis tekst, paragraf paragraf PARAGRAF.
     </p>
+    <br>
     <h2>
         naglowek h2 tabela:
     </h2>
     <!-- Podpunkt 1) - Table z trzema jezykami programowania -->
-    <table border="1">
-        <caption>
+    <table border="2">
+        <caption class="text-green-400 bg-red-950">
             Ranking języków programowania
         </caption>
         <thead>
@@ -54,23 +56,32 @@
         </tbody>
         <tfoot>
             <tr>
-                <th scope="row" colspan="2">Ulubiony język: </th>
+                <th scope="row" colspan="2" class="text-yellow-700 bg-slate-600">Ulubiony język: </th>
                 <td>C++</td>
             </tr>
         </tfoot>
     </table>
-   
+    <br>
+
+    
+    <div class="shadow-lg" style="border: 1px solid black; width: auto; max-width: 200px;">
+        <p>
+            To jest jakiś tekst w cieniu.
+        </p>
+    </div>
+
     <!-- Podpunkt 2) Lista z numeracja rzymską -->
 
     <!-- This is an ordered list (<ol>) with type "i", which means the list items will be marked with lowercase Roman numerals. -->
-    <h3>Lista języków programowania:</h3>
-    <ol type="I">
+    <h3 class="text-purple-800">Lista języków programowania:</h3>
+    <ol class="upper-roman"> 
         <li>C++</li>
         <li>Java</li>
         <li>Python</li>
         <li>JavaScript</li>
     </ol>
 
+    <br>
     <!-- Podpunkt 3) Uzycie tagow strong, em, mark -->
     <p>
         To jest wyróżniony tekst <mark>zaznaczony</mark> w paragrafie.
