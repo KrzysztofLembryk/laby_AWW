@@ -26,17 +26,17 @@
     </header>
 
     <!-- Tutaj panel boczny z jakimis linkami, nawigacja -->
-    <nav class="border-r">
+    <nav class="border-r pl-1">
         <p class="italic text-sm">Linki do języków używanych w AWWW:</p>
         <ul class="flex flex-col">
             <li class="flex-1">
-                <a href="https://www.w3schools.com/html/">HTML</a>
+                <a href="https://www.w3schools.com/html/" class="underline">HTML</a>
             </li>
             <li class="flex-1">
-                <a href="https://www.w3schools.com/css/">CSS</a>
+                <a href="https://www.w3schools.com/css/" class="underline">CSS</a>
             </li>
             <li class="flex-1">
-                <a href="https://www.w3schools.com/js/">JavaScript</a>
+                <a href="https://www.w3schools.com/js/" class="underline">JavaScript</a>
             </li>
         </ul>
     </nav>
@@ -113,12 +113,14 @@
 
         <!-- This is an ordered list (<ol>) with type "i", which means the list items will be marked with lowercase Roman numerals. -->
         <h3 class="text-purple-800">Lista języków programowania:</h3>
-        <ol class="list-decimal"> 
-            <li>C++</li>
-            <li>Java</li>
-            <li>Python</li>
-            <li>JavaScript</li>
-        </ol>
+        <div class="pl-2">
+            <ol class="list-decimal"> 
+                <li>C++</li>
+                <li>Java</li>
+                <li>Python</li>
+                <li>JavaScript</li>
+            </ol>
+        </div>
 
         <br>
         <!-- Podpunkt 3) Uzycie tagow strong, em, mark -->
@@ -220,11 +222,14 @@
             <area shape="rect" coords="460, 390, 870, 600" href="https://pl.wikipedia.org/wiki/Notes" alt="notebook">
         </map>
     </article>
+    
     <aside class="border-l pl-1">
-        <h3 class="text-green-500">About Llamas</h3>
+        <h3 class="text-green-500">Aside note About Llamas</h3>
         <p>
             Llamas are domesticated South American camelids. They are known for their woolly coats, long necks, and distinctive appearance. Llamas are often used as pack animals and are valued for their strength and endurance. They are also gentle and intelligent animals, making them popular in petting zoos and as therapy animals. Llamas are herbivores and primarily eat grass and other vegetation. They are social animals and live in herds. Next time you visit a zoo, make sure to say hello to the llamas!
         </p>
+        
+        <img src="https://m.media-amazon.com/images/I/61s9uJQGhBL._AC_UF1000,1000_QL80_.jpg" alt="lama_from_Amazon">
     </aside>
     <!-- Tutaj stopka -->
     <footer class="col-span-3 text-center">
