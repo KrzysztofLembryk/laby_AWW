@@ -17,10 +17,10 @@
 
 <br>
 <body>
-   <div class="grid-cols-3">
+   <div class="grid gap-2 grid-cols-[1fr_3fr_1fr]">
     <!-- Header bedzie na samej gorze -->
-    <header>
-        <h1>
+    <header class="col-span-3">
+        <h1 class="text-xl font-extrabold">
             Moja strona napisana ręcznie w HTML z Tailwind i GridCSS i BootStrap.
         </h1>    
     </header>
@@ -219,12 +219,13 @@
             <area shape="rect" coords="460, 390, 870, 600" href="https://pl.wikipedia.org/wiki/Notes" alt="notebook">
         </map>
     </article>
+
+    <!-- Tutaj stopka -->
+    <footer class="col-span-3">
+        <br>Stopka jakas.
+    </footer>
 </div> 
 </body>
 
-<!-- Tutaj stopka -->
-<footer>
-    <br>Stopka jakas.
-</footer>
 
 </html>
