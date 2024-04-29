@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Logowanie</title>
+</head>
+<body>
+    <h1>Logowanie ArtUserów</h1>
+    {% if error %}
+    <p>{{ error }}</p>
+    {% endif %}
+    <form method="post" action="{% url 'obrazki_app:login' %}">
+        {% csrf_token %}
+        <input type="text" name="username" placeholder="Nazwa użytkownika"><br>
+        <input type="password" name="password" placeholder="Hasło"><br>
+        <input type="submit" value="Zaloguj">
+    </form>
+    <a href="{% url 'admin:login' %}">Go to Admin Login</a>
+</html>
+
+
+
