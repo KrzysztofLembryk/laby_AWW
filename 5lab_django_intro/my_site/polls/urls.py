@@ -11,6 +11,7 @@ from . import views
 # 
 # So, if you navigate to a URL like /5/, the 5 will be captured by the <int:question_id> path converter, converted to an integer, and then passed to the views.detail function as an argument named question_id.
 # Exmaple: http://localhost:8000/5/
+app_name = "polls"
 urlpatterns = [ 
     path('', views.index, name='index'),
     path("<int:question_id>/", views.detail, name="detail"),

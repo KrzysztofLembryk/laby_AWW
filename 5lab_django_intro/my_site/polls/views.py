@@ -3,6 +3,7 @@ from django.http import HttpResponse
 from .models import Question
 from django.template import loader
 from django.http import Http404
+from django.shortcuts import get_object_or_404
 
 
 
@@ -22,10 +23,11 @@ def index(request):
 # It takes a request argument, which is an HttpRequest object that represents 
 # the current request.
 def detail(request, question_id):
-    try:
-        question = Question.objects.get(pk=question_id)
-    except Question.DoesNotExist:
-        raise Http404(f"Question does not exist")
+    # try:
+    #     question = Question.objects.get(pk=question_id)
+    # except Question.DoesNotExist:
+    #     raise Http404(f"Question does not exist")
+    question = get_object_or_404(Question, pk=question_id)
     return render(request, "polls/detail.html", {"question": question})
 
 def results(request, question_id):
