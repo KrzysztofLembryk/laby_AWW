@@ -1,12 +1,24 @@
 <!DOCTYPE html>
 <html>
+
 <head>
     <p>To jest strona główna z różnymi linkami do aplikacji (podstron)</p>
 </head>
+
 <body>
-    <a href="{% url 'polls:index' %}">
-        <button>Go to Polls</button>
-    </a>
+
+    <div class="flex-column">
+        <div class="flex-row">
+            <a href="{% url 'polls:index' %}">
+                <button>Go to Polls</button>
+            </a>
+        </div>
+        <div class="flex-row">
+            <a href="{% url 'obrazki_app:index' %}">
+                <button>Go to Obrazki</button>
+            </a>
+        </div>
+    </div>
     <br>
 </body>
 <footer>
