@@ -10,8 +10,10 @@
     <p>Thank you for visiting.</p>
     <a href="/admin/">Go to Admin Site</a>
     <br>
-    <a href="{% url 'login' %}">Go to Login Page</a>
+    <a href="{% url 'loginApp:login' %}">Go to Login Page</a>
     <br>
-    <a href="{% url 'logout' %}" class="btn btn-outline">Logout</a>
+    <a href="{% url 'loginApp:logout' %}" class="btn btn-outline">Logout</a>
+    <br>
+    <a href="{% url 'obrazkiApp:index' %}">Go to obrazkiApp index</a>
 </body>
 </html>

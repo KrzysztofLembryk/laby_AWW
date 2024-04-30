@@ -21,7 +21,7 @@ def loginview(request):
         if user is not None:
             login(request, user)
             messages.success(request, 'Logged in successfully')
-            return redirect('index')
+            return redirect('loginApp:index')
         else:
             messages.error(request, 'Logged in Fail')
     return render(request, 'loginApp/login.html')
