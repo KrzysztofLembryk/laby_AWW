@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Home Page</title>
+    <style>
+        .container {
+            display: flex;
+            justify-content: space-between;
+        }
+        .column {
+            flex-basis: 50%;
+        }
+        .footer {
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="column">
+            <h2>Login Page</h2>
+            <a href="{% url 'login' %}">Go to Login Page</a>
+        </div>
+        <div class="column">
+            <h2>Admin Page</h2>
+            <a href="/admin">Go to Admin Page</a>
+        </div>
+    </div>
+</body>
+<footer>
+            <p>Have a great day! 😊</p>
+</footer>
+</html>

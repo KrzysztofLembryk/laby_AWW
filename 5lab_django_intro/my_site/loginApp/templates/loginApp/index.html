@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Welcome to LOGIN SITE</title>
+</head>
+<body>
+    {% for message in messages %}
+        <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+    {% endfor %}
+    <p>Thank you for visiting.</p>
+    <a href="/admin/">Go to Admin Site</a>
+    <br>
+    <a href="{% url 'login' %}">Go to Login Page</a>
+    <br>
+    <a href="{% url 'logout' %}" class="btn btn-outline">Logout</a>
+</body>
+</html>
