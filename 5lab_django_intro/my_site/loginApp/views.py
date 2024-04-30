@@ -29,3 +29,7 @@ def loginview(request):
 def logout_view(request):
     logout(request)
     return redirect('login')
+
+def guest(request):
+    return render(request, 'loginApp/guest.html')
+
