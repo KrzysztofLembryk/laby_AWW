@@ -1,10 +1,20 @@
 from django.shortcuts import render
 from django.conf import settings
 import os
+from .models import SVG_image
 
 # Create your views here.
 def index(request):
     return render(request, 'obrazkiApp/index.html')
+
+def svg_detail(request, svg_id):
+    # trzeba bedzie zmienic na get_object_or_404
+    svg_object = SVG_image.objects.get(id=svg_id)
+    return render(request, 'obrazkiApp/svg_detail.html', {'svg_object': svg_object})
+
+def list_svg_images(request):
+    svg_objects = SVG_image.objects.all()
+    return render(request, 'obrazkiApp/list_svg_images.html', {'svg_objects': svg_objects})
 
 def svg_form_view(request):
     if request.method == 'POST':

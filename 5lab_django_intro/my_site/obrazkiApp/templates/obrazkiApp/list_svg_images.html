@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+
+<body>
+    <h2>List of available svg images:</h2>
+    {% if svg_objects %}
+    <ul>
+        {% for svg_obj in svg_objects %}
+        <li><a href="{% url 'obrazkiApp:svg_detail' svg_obj.id %}">{{ svg_obj.name }}</a></li>
+        {% endfor %}
+    </ul>
+    {% else %}
+    <p>No svg images are available.</p>
+    {% endif %}
+</body>
+
+</html>

@@ -4,8 +4,7 @@ from django.db import models
 from django.contrib.auth.models import User
 import os
 from pathlib import Path
-
-base_dir = Path(__file__).resolve().parent.parent
+from django.conf import settings
 
 # Create your models here.
 class SVG_image(models.Model):
@@ -19,11 +18,11 @@ class SVG_image(models.Model):
     
     def create_svg(self):
 
-        svg_header = f'<svg width="{self.width}" height="{self.height}" xmlns="http://www.w3.org/2000/svg">'
+        svg_header = f'<svg width="{self.width}" height="{self.height}"  viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">'
         svg_end = '</svg>' 
         svg_content = svg_header + svg_end
 
-        file_path = base_dir / "media/images/" / (self.name + ".svg")
+        file_path = settings.STATIC_ROOT / "svg" / (self.name + ".svg")
 
         if os.path.exists(file_path):
             file_content = ""
