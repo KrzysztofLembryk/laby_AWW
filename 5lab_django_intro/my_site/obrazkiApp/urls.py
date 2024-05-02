@@ -9,4 +9,6 @@ urlpatterns = [
     path("svg_form/", views.svg_form_view, name="svg_img_form"),
     path("<int:svg_id>/", views.svg_detail, name="svg_detail"),
     path("svg_list/", views.list_svg_images, name="svg_list"),
+    path("svg_modifiable_list/", views.svg_modifiable_list, name="svg_modifiable_list"),
+    path("<int:svg_id>/modifiable/", views.svg_modifiable_detail, name="svg_modifiable_detail"),
 ]

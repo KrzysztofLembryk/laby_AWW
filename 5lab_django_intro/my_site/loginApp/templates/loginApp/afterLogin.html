@@ -7,10 +7,8 @@
     {% for message in messages %}
         <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
     {% endfor %}
-    <p>Thank you for visiting.</p>
-    <!-- <a href="/admin/">Go to Admin Site</a> -->
+    <p>Thank you for visiting ArtUser.</p>
     <br>
-    <!-- <a href="{% url 'loginApp:login' %}">Go to Login Page</a> -->
     <a href="{% url 'obrazkiApp:index' %}">Go to obrazkiApp index</a>
     <br>
     <a href="{% url 'loginApp:logout' %}" class="btn btn-outline">Logout</a>

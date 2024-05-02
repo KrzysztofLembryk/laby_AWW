@@ -3,7 +3,9 @@ from django.conf import settings
 import os
 from .models import SVG_image
 from django.contrib.auth.decorators import login_required
-
+import re
+import xml.etree.ElementTree as ET
+ET.register_namespace('',"http://www.w3.org/2000/svg")
 # Create your views here.
 @login_required
 def index(request):
@@ -38,4 +40,62 @@ def svg_form_view(request):
     else:
         return render(request, 'obrazkiApp/svg_img_form.html', {})
 
+@login_required
+def svg_modifiable_list(request):
+    svg_objects = SVG_image.objects.all()
+    modifiable_lst = []
 
+    for svg in svg_objects:
+        if svg.permitted_users.filter(id=request.user.id):
+            modifiable_lst.append(svg)
+    
+    return render(request, 'obrazkiApp/svg_modifiable_list.html', {'svg_objects': modifiable_lst})
+
+@login_required
+def svg_modifiable_detail(request, svg_id):
+    svg_object = SVG_image.objects.get(id=svg_id)
+    file_path = settings.STATIC_ROOT / "svg" / (svg_object.name + ".svg")
+
+    if os.path.exists(file_path):
+        file_content = ""
+        header = ""
+        rect_content = ""
+        rect_list = []
+        with open(file_path, 'r') as file:
+            # otwieramy plik svg i czytamy cala zawartosc, nastepnie    
+            # zapamietujemy naglowek svg i oddzielamy obiekty rect 
+            file_content = file.read()
+            svg_header_end_idx = file_content.find('>')
+            header = file_content[:svg_header_end_idx + 1]
+            rect_content = file_content[svg_header_end_idx + 1:file_content.find('</svg>')]
+
+            root = ET.fromstring(file_content)
+            rect_list = []
+            for child in root:
+                rect_list.append(child)
+        return render(request, 'obrazkiApp/svg_modifiable_detail.html', {'svg_object': svg_object, 'rect_list': rect_list})
+        #     for rect in root.findall('rect'):
+        #         x = rect.get('x')
+        #         y = rect.get('y')
+        #         width = rect.get('width')
+        #         height = rect.get('height')
+        #         fill = rect.get('fill')
+
+        # rect_list = re.findall(r'<rect.*?/>', rect_content)
+        
+
+            
+
+
+
+
+
+
+    if request.method == 'POST':
+        name = request.POST["name"]
+        x = request.POST["x"]
+        y = request.POST["y"]
+        height = request.POST["height"]
+        width = request.POST["width"]
+        color = request.POST["color"]
+    return render(request, 'obrazkiApp/svg_modifiable_detail.html', {'svg_object': svg_object})

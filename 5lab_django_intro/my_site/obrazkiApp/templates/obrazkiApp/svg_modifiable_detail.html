@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+    <body>
+        <a href="{% url 'obrazkiApp:svg_modifiable_list' %}">Return to list of modifiable SVGs</a>
+
+        {% load svg %}
+        <h1 class="name">{% svg svg_object.name %}</h1>
+
+        <h3>DANE:</h3>
+       <p>NAME: {{svg_object.name}} <br>
+        <p>WIDTH x HEIGHT: {{svg_object.width}} x {{svg_object.height}}</p>
+
+        <h3>Prostokąty:</h3>
+        <table>
+            <tr>
+                <th>x</th>
+                <th>y</th>
+                <th>width</th>
+                <th>height</th>
+                <th>color</th>
+            </tr>
+            {% for rect in rect_list %}
+            <tr>
+                <td>{{ rect.attrib.x }}</td>
+                <td>{{ rect.attrib.y }}</td>
+                <td>{{ rect.attrib.width }}</td>
+                <td>{{ rect.attrib.height }}</td>
+                <td>{{ rect.attrib.fill }}</td>
+            </tr>
+            {% endfor %}
+        </table>
+
+        <h3>Dodaj nowy prostokąt:</h3>
+        <form action="" method="post">
+            {% csrf_token %}
+            <label for="x">X:</label>
+            <input type="number" id="x" name="x" min="0" required><br>
+
+            <label for="y">Y:</label>
+            <input type="number" id="y" name="y" min="0" required><br>
+
+            <label for="height">Height:</label>
+            <input type="number" id="height" name="height" min="0" required><br>
+
+            <label for="width">Width:</label>
+            <input type="number" id="width" name="width" min="0" required><br>
+
+            <label for="color">Color:</label>
+            <input type="color" id="color" name="color" required><br>
+            <br>
+            <input type="submit" value="Submit">
+        </form>
+    </body>
+</html>

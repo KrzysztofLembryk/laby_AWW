@@ -6,8 +6,8 @@
 </head>
 
 <body>
-    <h1>Welcome to obrazki APP webapge </h1>
-    <p>This is the homepage (index).</p>
+    <h1>Welcome to obrazkiAPP webapge </h1>
+    <p>This is the homepage with available actions for ArtUser.</p>
     <h2>Here is a sample svg img:</h2>
     <ul>
         <li>
@@ -16,11 +16,14 @@
             </svg>
         </li>
     </ul>
-    <br>
-    <a href="{% url 'obrazkiApp:svg_img_form' %}">Go to SVG Image Form</a>
-    <br>
+    <p>available actions:</p>
     <a href="{% url 'obrazkiApp:svg_list' %}">Go to SVG list</a>
     <br>
+    <a href="{% url 'obrazkiApp:svg_modifiable_list' %}">Go to SVG list with modifiable images</a>
+    <br>
+    <a href="{% url 'obrazkiApp:svg_img_form' %}">Go to SVG Image Form</a>
+
+    <p>Other:</p>
     <a href="{% url 'loginApp:afterLogin' %}">Return to AfterLogin page</a>
 </body>
 
