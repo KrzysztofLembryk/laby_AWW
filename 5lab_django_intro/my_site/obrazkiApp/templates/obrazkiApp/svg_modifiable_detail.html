@@ -6,8 +6,12 @@
         {% load svg %}
         <h1 class="name">{% svg svg_object.name %}</h1>
 
-        <h3>DANE:</h3>
-       <p>NAME: {{svg_object.name}} <br>
+        <h3>DATA:</h3>
+        <p>NAME: {{svg_object.name}} <br>
+        {% if svg_object.description %}
+            <p>DESCRIPTION: {{svg_object.description}}</p>
+        {% endif %}
+        <p>PUB DATE: {{svg_object.pub_date}}</p>
         <p>WIDTH x HEIGHT: {{svg_object.width}} x {{svg_object.height}}</p>
 
         <h3>Prostokąty:</h3>

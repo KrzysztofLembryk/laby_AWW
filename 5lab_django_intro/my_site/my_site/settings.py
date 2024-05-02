@@ -31,6 +31,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    'taggit',
     'svg',
     "obrazkiApp.apps.ObrazkiappConfig",
     "loginApp.apps.LoginappConfig",

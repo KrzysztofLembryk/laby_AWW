@@ -2,10 +2,13 @@
 <html>
     <body>
         <a href="{% url 'obrazkiApp:svg_list' %}">Return to list of SVGs</a>
-       <p>Svg name: {{svg_object.name}}</p> 
-        <p>Svg height: {{svg_object.height}}</p>
-        <p>Svg width: {{svg_object.width}}</p>
-        <p>Svg image:</p>
+        <p>NAME: {{svg_object.name}}</p> 
+        {% if svg_object.description %}
+            <p>DESCRIPTION: {{svg_object.description}}</p>
+        {% endif %}
+        <p>PUB DATE: {{svg_object.pub_date}}</p>
+        <p>WIDTH x HEIGHT: {{svg_object.width}} x {{svg_object.height}}</p>
+        <p>image:</p>
         {% load svg %}
         <h1 class="name">{% svg svg_object.name %}</h1>
 

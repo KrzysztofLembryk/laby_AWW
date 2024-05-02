@@ -5,12 +5,16 @@ from django.contrib.auth.models import User
 import os
 from pathlib import Path
 from django.conf import settings
+from taggit.managers import TaggableManager
 
 # Create your models here.
 class SVG_image(models.Model):
     name = models.CharField(max_length=100)
     width = models.PositiveIntegerField()
     height = models.PositiveIntegerField()
+    description = models.CharField(max_length=200, blank=True)
+    pub_date = models.DateTimeField()
+    tags = TaggableManager()
     permitted_users = models.ManyToManyField(User)
 
     def __str__(self):
