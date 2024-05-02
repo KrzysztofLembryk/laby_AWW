@@ -51,29 +51,54 @@ def svg_modifiable_list(request):
     
     return render(request, 'obrazkiApp/svg_modifiable_list.html', {'svg_objects': modifiable_lst})
 
-@login_required
-def svg_modifiable_detail(request, svg_id):
-    svg_object = SVG_image.objects.get(id=svg_id)
-    file_path = settings.STATIC_ROOT / "svg" / (svg_object.name + ".svg")
+
+def add_new_rect(request, file_path):
+    x = request.POST["x"]
+    y = request.POST["y"]
+    height = request.POST["height"]
+    width = request.POST["width"]
+    color = request.POST["color"]
 
     if os.path.exists(file_path):
+        without_end = ""
+
+        with open(file_path, 'r') as file:
+            # otwieramy plik svg i czytamy cala zawartosc, nastepnie    
+            # zapamietujemy naglowek svg i oddzielamy obiekty rect 
+            file_content = file.read()
+            without_end = file_content[:file_content.find('</svg>')]
+
+        new_rect = f'<rect x="{x}" y="{y}" width="{width}" height="{height}" fill="{color}"/>'
+        new_content = without_end + new_rect + '</svg>'
+
+        with open(file_path, 'w') as file:
+            file.write(new_content)
+
+def get_rect_lst(file_path):
+    if os.path.exists(file_path):
         file_content = ""
-        header = ""
-        rect_content = ""
         rect_list = []
         with open(file_path, 'r') as file:
             # otwieramy plik svg i czytamy cala zawartosc, nastepnie    
             # zapamietujemy naglowek svg i oddzielamy obiekty rect 
             file_content = file.read()
-            svg_header_end_idx = file_content.find('>')
-            header = file_content[:svg_header_end_idx + 1]
-            rect_content = file_content[svg_header_end_idx + 1:file_content.find('</svg>')]
-
             root = ET.fromstring(file_content)
             rect_list = []
             for child in root:
                 rect_list.append(child)
-        return render(request, 'obrazkiApp/svg_modifiable_detail.html', {'svg_object': svg_object, 'rect_list': rect_list})
+        return rect_list
+
+@login_required
+def svg_modifiable_detail(request, svg_id):
+    svg_object = SVG_image.objects.get(id=svg_id)
+    file_path = settings.STATIC_ROOT / "svg" / (svg_object.name + ".svg")
+
+    if request.method == 'POST':
+        add_new_rect(request, file_path)
+
+    rect_list = get_rect_lst(file_path)
+
+    return render(request, 'obrazkiApp/svg_modifiable_detail.html', {'svg_object': svg_object, 'rect_list': rect_list})
         #     for rect in root.findall('rect'):
         #         x = rect.get('x')
         #         y = rect.get('y')
@@ -91,11 +116,4 @@ def svg_modifiable_detail(request, svg_id):
 
 
 
-    if request.method == 'POST':
-        name = request.POST["name"]
-        x = request.POST["x"]
-        y = request.POST["y"]
-        height = request.POST["height"]
-        width = request.POST["width"]
-        color = request.POST["color"]
     return render(request, 'obrazkiApp/svg_modifiable_detail.html', {'svg_object': svg_object})
