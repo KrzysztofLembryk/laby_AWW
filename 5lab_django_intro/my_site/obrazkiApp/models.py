@@ -43,3 +43,14 @@ class SVG_image(models.Model):
         self.create_svg()
         # call the parent's save() method
         super(SVG_image, self).save(*args, **kwargs)
+    
+    def delete(self):
+        file_path = settings.STATIC_ROOT / "svg" / (self.name + ".svg")
+
+        if os.path.exists(file_path):
+            try:
+                os.remove(file_path)
+            except Exception as e:
+                print(e)
+
+        super(SVG_image, self).delete()

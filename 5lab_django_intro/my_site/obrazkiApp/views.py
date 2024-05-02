@@ -127,12 +127,11 @@ def remove_rect_helper(file_path, rect_id):
         with open(file_path, 'w') as file:
             file.write(final_file)
 
+@login_required
 def svg_remove_rect(request, svg_id, rect_id):
     svg_object = SVG_image.objects.get(id=svg_id)
     file_path = settings.STATIC_ROOT / "svg" / (svg_object.name + ".svg")
 
     remove_rect_helper(file_path, rect_id)
-    rect_list = get_rect_lst(file_path)
 
     return redirect('obrazkiApp:svg_modifiable_detail', svg_id=svg_id)
-    # return render(request, 'obrazkiApp/svg_modifiable_detail.html', {'svg_object': svg_object, 'rect_list': rect_list})
