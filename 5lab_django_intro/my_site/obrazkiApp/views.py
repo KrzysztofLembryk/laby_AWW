@@ -2,8 +2,10 @@ from django.shortcuts import render
 from django.conf import settings
 import os
 from .models import SVG_image
+from django.contrib.auth.decorators import login_required
 
 # Create your views here.
+@login_required
 def index(request):
     return render(request, 'obrazkiApp/index.html')
 
@@ -16,6 +18,7 @@ def list_svg_images(request):
     svg_objects = SVG_image.objects.all()
     return render(request, 'obrazkiApp/list_svg_images.html', {'svg_objects': svg_objects})
 
+@login_required
 def svg_form_view(request):
     if request.method == 'POST':
         name = request.POST["name"]
