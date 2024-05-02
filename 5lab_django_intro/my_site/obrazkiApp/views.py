@@ -5,7 +5,10 @@ from .models import SVG_image
 from django.contrib.auth.decorators import login_required
 import re
 import xml.etree.ElementTree as ET
+from django.shortcuts import redirect
+
 ET.register_namespace('',"http://www.w3.org/2000/svg")
+
 # Create your views here.
 @login_required
 def index(request):
@@ -64,11 +67,11 @@ def add_new_rect(request, file_path):
 
         with open(file_path, 'r') as file:
             # otwieramy plik svg i czytamy cala zawartosc, nastepnie    
-            # zapamietujemy naglowek svg i oddzielamy obiekty rect 
+            # zapamietujemy calosc poza koncem i dodajemy na koniec nowy rect
             file_content = file.read()
             without_end = file_content[:file_content.find('</svg>')]
 
-        new_rect = f'<rect x="{x}" y="{y}" width="{width}" height="{height}" fill="{color}"/>'
+        new_rect = f'<rect x="{x}" y="{y}" width="{width}" height="{height}" fill="{color}"/>\n'
         new_content = without_end + new_rect + '</svg>'
 
         with open(file_path, 'w') as file:
@@ -99,21 +102,37 @@ def svg_modifiable_detail(request, svg_id):
     rect_list = get_rect_lst(file_path)
 
     return render(request, 'obrazkiApp/svg_modifiable_detail.html', {'svg_object': svg_object, 'rect_list': rect_list})
-        #     for rect in root.findall('rect'):
-        #         x = rect.get('x')
-        #         y = rect.get('y')
-        #         width = rect.get('width')
-        #         height = rect.get('height')
-        #         fill = rect.get('fill')
 
-        # rect_list = re.findall(r'<rect.*?/>', rect_content)
-        
+def remove_rect_helper(file_path, rect_id):
+    if os.path.exists(file_path):
+        final_file = ""
+        with open(file_path, 'r') as file:
+            file_content = file.read()
+            root = ET.fromstring(file_content)
+            rect_list = []
 
-            
+            for child in root:
+                rect_list.append(child)
 
+            i = 0
+            final_file = file_content[:file_content.find('>') + 1] + "\n"
 
+            for rect in rect_list:
+                if i != rect_id:
+                    new_rect = f'<rect x="{rect.attrib['x']}" y="{rect.attrib['y']}" width="{rect.attrib['width']}" height="{rect.attrib['height']}" fill="{rect.attrib['fill']}"/>\n'
+                    final_file += new_rect
+                i += 1 
+            final_file += '</svg>'
 
+        with open(file_path, 'w') as file:
+            file.write(final_file)
 
+def svg_remove_rect(request, svg_id, rect_id):
+    svg_object = SVG_image.objects.get(id=svg_id)
+    file_path = settings.STATIC_ROOT / "svg" / (svg_object.name + ".svg")
 
+    remove_rect_helper(file_path, rect_id)
+    rect_list = get_rect_lst(file_path)
 
-    return render(request, 'obrazkiApp/svg_modifiable_detail.html', {'svg_object': svg_object})
+    return redirect('obrazkiApp:svg_modifiable_detail', svg_id=svg_id)
+    # return render(request, 'obrazkiApp/svg_modifiable_detail.html', {'svg_object': svg_object, 'rect_list': rect_list})

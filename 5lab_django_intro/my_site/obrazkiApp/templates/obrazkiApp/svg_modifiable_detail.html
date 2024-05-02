@@ -18,6 +18,7 @@
                 <th>width</th>
                 <th>height</th>
                 <th>color</th>
+                <th>remove</th>
             </tr>
             {% for rect in rect_list %}
             <tr>
@@ -26,6 +27,7 @@
                 <td>{{ rect.attrib.width }}</td>
                 <td>{{ rect.attrib.height }}</td>
                 <td>{{ rect.attrib.fill }}</td>
+                <td><a href="{% url 'obrazkiApp:svg_remove_rect' svg_object.id forloop.counter0 %}">remove?</a></td>
             </tr>
             {% endfor %}
         </table>

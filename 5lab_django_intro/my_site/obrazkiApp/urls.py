@@ -11,4 +11,5 @@ urlpatterns = [
     path("svg_list/", views.list_svg_images, name="svg_list"),
     path("svg_modifiable_list/", views.svg_modifiable_list, name="svg_modifiable_list"),
     path("<int:svg_id>/modifiable/", views.svg_modifiable_detail, name="svg_modifiable_detail"),
+    path("<int:svg_id>/<int:rect_id>/", views.svg_remove_rect, name="svg_remove_rect"),
 ]
