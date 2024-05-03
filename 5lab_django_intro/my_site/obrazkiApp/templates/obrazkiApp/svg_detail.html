@@ -1,6 +1,14 @@
-<!DOCTYPE html>
-<html>
-    <body>
+<!-- <!DOCTYPE html>
+<html> -->
+<head>
+    <title>Svg detail</title>
+</head>
+{% extends 'obrazkiApp/base.html' %} 
+
+{% block content %}
+    <!-- <body> -->
+        <div class="m-1">
+
         <a href="{% url 'obrazkiApp:svg_list' %}">Return to list of SVGs</a>
         <p>NAME: {{svg_object.name}}</p> 
         {% if svg_object.description %}
@@ -17,5 +25,7 @@
         <p>image:</p>
         {% load svg %}
         <h1 class="name">{% svg svg_object.name %}</h1>
-    </body>
-</html>
+        </div>
+{% endblock content %}
+    <!-- </body> -->
+<!-- </html> -->

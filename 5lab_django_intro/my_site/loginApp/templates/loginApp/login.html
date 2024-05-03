@@ -1,27 +1,29 @@
-<!DOCTYPE html>
-<html>
 <head>
-    <p>LOGIN form:</p>
+    <title>LOGIN SITE</title>
 </head>
+{% extends 'loginApp/base.html' %}
 
-<body>
+{% block content %}
+
+<div class="p-1 m-1">
+
+    <p class="font-italic">LOGIN form:</p>
     {% for message in messages %}
-        <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
-    {% endfor %}
-    <br>
-    <form action="" method="post">
-        {% csrf_token %}
-        <label for="">username</label>
-        <input type="text" name="username" id="">
+    <li{% if message.tags %} class="{{ message.tags }}" {% endif %}>{{ message }}</li>
+        {% endfor %}
         <br>
-        <label for="">Password</label>
-        <input type="password" name="password" id="">
+        <form action="" method="post">
+            {% csrf_token %}
+            <label for="">username</label>
+            <input type="text" name="username" id="">
+            <br>
+            <label for="">Password</label>
+            <input type="password" name="password" id="">
+            <br>
+            <input type="submit" value="Login">
+        </form>
         <br>
-        <input type="submit" value="Login">
-    </form>
-    <br>
-    <a href="{% url 'loginApp:home' %}">Home</a>
-</body>
-  
+        <a href="{% url 'loginApp:home' %}">Home</a>
 
-</html>
+</div>
+{% endblock content %}

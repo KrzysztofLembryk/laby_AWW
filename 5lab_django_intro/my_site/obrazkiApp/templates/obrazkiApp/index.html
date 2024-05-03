@@ -1,11 +1,15 @@
-<!DOCTYPE html>
-<html>
+<!-- <!DOCTYPE html>
+<html> -->
 
 <head>
     <title>Obrazki APp paagee</title>
 </head>
+{% extends 'obrazkiApp/base.html' %} 
 
-<body>
+{% block content %}
+
+<!-- <body> -->
+    <div class="m-1">
     <h1>Welcome to obrazkiAPP webapge </h1>
     <p>This is the homepage with available actions for ArtUser.</p>
     <h2>Here is a sample svg img:</h2>
@@ -16,13 +20,15 @@
             </svg>
         </li>
     </ul>
-    <p>available actions:</p>
+    <p class="font-italic">available actions:</p>
     <a href="{% url 'obrazkiApp:svg_list' %}">Go to SVG list</a>
     <br>
     <a href="{% url 'obrazkiApp:svg_modifiable_list' %}">Go to SVG list with modifiable images</a>
-
+    
     <p>Other:</p>
     <a href="{% url 'loginApp:afterLogin' %}">Return to AfterLogin page</a>
-</body>
+</div>
+{% endblock content %}
+<!-- </body>
 
-</html>
+</html> -->

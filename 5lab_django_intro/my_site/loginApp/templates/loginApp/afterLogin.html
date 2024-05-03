@@ -1,18 +1,34 @@
-<!DOCTYPE html>
-<html>
+<!-- <!DOCTYPE html>
+<html> -->
 <head>
     <title>Welcome to LOGIN SITE</title>
 </head>
-<body>
+{% extends 'loginApp/base.html' %} 
+
+{% block content %}
+<!-- <body> -->
     {% for message in messages %}
         <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
     {% endfor %}
     <p>Thank you for visiting ArtUser.</p>
     <br>
-    <a href="{% url 'obrazkiApp:index' %}">Go to obrazkiApp index</a>
+    <a href="{% url 'obrazkiApp:index' %}">
+        <button class="btn btn-success font-weight-bold">
+            Go to obrazkiApp index
+        </button>
+    </a>
     <br>
-    <a href="{% url 'loginApp:logout' %}" class="btn btn-outline">Logout</a>
+    <a href="{% url 'loginApp:logout' %}">
+        <button class="btn btn-danger font-weight-bold">
+            Logout
+        </button>
+    </a>
     <br>
-    <a href="{% url 'loginApp:home' %}" class="btn btn-outline">Return to HOME page</a>
-</body>
-</html>
+    <a href="{% url 'loginApp:home' %}">
+        <button class="btn btn-info font-weight-bold">
+            Return to HOME page
+        </button>
+    </a>
+{% endblock content %}
+<!-- </body>
+</html> -->

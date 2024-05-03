@@ -1,6 +1,12 @@
-<!DOCTYPE html>
+<!-- <!DOCTYPE html>
 <html>
-    <body>
+    <body> -->
+<head>
+    <title>Modifiable svg detail</title>
+</head>
+{% extends 'obrazkiApp/base.html' %} 
+
+{% block content %}
         <a href="{% url 'obrazkiApp:svg_modifiable_list' %}">Return to list of modifiable SVGs</a>
 
         {% load svg %}
@@ -62,5 +68,6 @@
             <br>
             <input type="submit" value="Submit">
         </form>
-    </body>
-</html>
+{% endblock content %}
+    <!-- </body>
+</html> -->

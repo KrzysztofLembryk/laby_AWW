@@ -1,12 +1,15 @@
-<!DOCTYPE html>
+<!-- <!DOCTYPE html>
 <html>
 
 <head>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css"
         integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
-</head>
+</head> -->
 
-<body>
+<!-- <body> -->
+{% extends 'obrazkiApp/base.html' %} 
+
+{% block content %}
     <div class="card-body">
         <div class="container">
             <a class="m-lg-1" href="{% url 'obrazkiApp:index' %}">Return to obrazkiApp main page</a>
@@ -80,6 +83,7 @@
             {% endif %}
         </div>
     </div>
-</body>
+{% endblock %}
+<!-- </body>
 
-</html>
+</html> -->
