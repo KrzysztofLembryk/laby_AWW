@@ -107,11 +107,23 @@ def svg_form_view(request):
 @login_required
 def svg_modifiable_list(request):
 
+    sort = request.GET.get("sort")
+    sorted_obj = []
+    if (sort):
+        if sort != "2":
+            if sort == "1":
+                sorted_obj = SVG_image.objects.all().order_by('-pub_date')
+            else:
+                sorted_obj = SVG_image.objects.all().order_by('pub_date')
+
     tag = request.GET.get("tag")
     if (tag):
         svg_objects = SVG_image.objects.filter(tags__name__in=[tag])
     else:
         svg_objects = SVG_image.objects.all()
+
+    if sorted_obj != []:
+        svg_objects = make_sorted_and_tagged_svg_list(svg_objects, sorted_obj)
 
     modifiable_lst = []
 

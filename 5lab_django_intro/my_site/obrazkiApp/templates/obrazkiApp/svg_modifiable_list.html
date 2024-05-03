@@ -6,6 +6,19 @@
             <a class="m-lg-1" href="{% url 'obrazkiApp:index' %}">Return to obrazkiApp main page</a>
 
             <div class="m-1">
+
+                <!-- Sorting by date -->
+                <a href="{% url 'obrazkiApp:svg_modifiable_list' %}?tag={{request.GET.tag}}&sort=1" class="btn btn-light">
+                    Sort by date newest first
+                </a>
+                <a href="{% url 'obrazkiApp:svg_modifiable_list' %}?tag={{request.GET.tag}}&sort=0" class="btn btn-light">
+                    Sort by date oldest first
+                </a>
+                <a href="{% url 'obrazkiApp:svg_modifiable_list' %}?tag={{request.GET.tag}}&sort=2" class="btn btn-light">
+                    No sort
+                </a>
+
+                <!-- Tags - available to choose, chosen -->
                 {%if request.GET.tag %}
                 <p>Showing articles with tag: {{request.GET.tag}}</p>
                 <a href="{% url 'obrazkiApp:svg_modifiable_list' %}" class="btn btn-success">
@@ -22,6 +35,8 @@
                 </a>
                 {% endfor %}
             </div>
+
+            <!-- SVG images -->
             <h2 class="m-lg-1">List of available svg images to modify:</h2>
             {% if images %}
             {% for svg_obj, thumbnail in images %}
@@ -59,18 +74,19 @@
             <p>No svg images are available to be modified by You.</p>
             {% endif %}
 
+            <!-- Pagination -->
             <br>
 
             {% if images.has_previous %}
-            <a href="?page=1">&laquo; First</a>
-            <a href="?page={{images.previous_page_number}}">Previous</a>
+            <a href="?page=1&tag={{request.GET.tag}}&sort={{request.GET.sort}}">&laquo; First</a>
+            <a href="?page={{images.previous_page_number}}&tag={{request.GET.tag}}&sort={{request.GET.sort}}">Previous</a>
             {% endif %}
 
             Page {{images.number}} of {{images.paginator.num_pages}}.
 
             {% if images.has_next %}
-            <a href="?page={{images.next_page_number}}">Next</a>
-            <a href="?page={{images.paginator.num_pages}}">Last &raquo;</a>
+            <a href="?page={{images.next_page_number}}&tag={{request.GET.tag}}&sort={{request.GET.sort}}">Next</a>
+            <a href="?page={{images.paginator.num_pages}}&tag={{request.GET.tag}}&sort={{request.GET.sort}}">Last &raquo;</a>
             {% endif %}
         </div>
     </div>
