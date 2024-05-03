@@ -12,6 +12,12 @@
             <p>DESCRIPTION: {{svg_object.description}}</p>
         {% endif %}
         <p>PUB DATE: {{svg_object.pub_date}}</p>
+        <p>TAGS:</p>
+        <ul>
+        {% for tag in svg_object.tags.all %}
+            <li> {{ tag.name }} </li>
+        {% endfor %}
+        </ul>
         <p>WIDTH x HEIGHT: {{svg_object.width}} x {{svg_object.height}}</p>
 
         <h3>Prostokąty:</h3>
