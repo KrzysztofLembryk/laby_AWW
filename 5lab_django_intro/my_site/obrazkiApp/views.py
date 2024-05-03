@@ -7,6 +7,7 @@ import re
 import xml.etree.ElementTree as ET
 from django.shortcuts import redirect
 from django.core.paginator import Paginator
+from taggit.models import Tag
 
 ET.register_namespace('',"http://www.w3.org/2000/svg")
 
@@ -46,15 +47,21 @@ def make_svgobject_thumbnail_double_list(svg_objects):
     return double_lst
 
 def list_svg_images(request):
-    svg_objects = SVG_image.objects.all()
-    double_lst = make_svgobject_thumbnail_double_list(svg_objects)
 
+    tag = request.GET.get("tag")
+    if (tag):
+        svg_objects = SVG_image.objects.filter(tags__name__in=[tag])
+    else:
+        svg_objects = SVG_image.objects.all()
+
+    double_lst = make_svgobject_thumbnail_double_list(svg_objects)
     make_svg_thumbnails(svg_objects)
     pagin = Paginator(double_lst, 2)
     page_number = request.GET.get('page')
     images = pagin.get_page(page_number)
+    tags = Tag.objects.all()
 
-    return render(request, 'obrazkiApp/list_svg_images.html', {"images": images})
+    return render(request, 'obrazkiApp/list_svg_images.html', {"images": images, "tags": tags})
 
 @login_required
 def svg_form_view(request):

@@ -14,10 +14,19 @@
             <div class="m-1">
                 {%if request.GET.tag %}
                 <p>Showing articles with tag: {{request.GET.tag}}</p>
-                <a href="{% url 'obrazkiApp:svg_list'%}" class="btn btn-sm btn-outline-secondary">Remove Tag Filter</a>
+                <a href="{% url 'obrazkiApp:svg_list'%}" class="btn btn-success">
+                    Remove Tag Filter
+                </a>
                 {%else %}
                 <p>No Tag Filter - showing all images.</span></p>
                 {%endif%}
+
+                {% for tag in tags %}
+                <a href="{% url 'obrazkiApp:svg_list'%}?tag={{tag}}"
+                    class="btn btn-sm btn-outline-secondary">
+                    {{tag}}
+                </a>
+                {% endfor %}
             </div>
 
 
