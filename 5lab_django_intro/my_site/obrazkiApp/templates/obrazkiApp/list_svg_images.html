@@ -1,55 +1,82 @@
 <!DOCTYPE html>
 <html>
+
 <head>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css"
         integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
 </head>
+
 <body>
-    <a href="{% url 'obrazkiApp:index' %}">Return to obrazkiApp main page</a>
+    <div class="card-body">
+        <div class="container">
+            <a class="m-lg-1" href="{% url 'obrazkiApp:index' %}">Return to obrazkiApp main page</a>
 
-     <div>
-        {%if request.GET.tag %}
-            <p>Showing articles with tag: {{request.GET.tag}}</p>
-            <a href="{% url 'obrazkiApp:svg_list'%}" class="btn btn-sm btn-outline-secondary">Remove Tag Filter</a>
-        {%else %}
-            <p>No Tag Filter - showing all articles.</span></p>
-        {%endif%}
-    </div>
-
-
-    <h2>List of available svg images:</h2>
-    {% if images %}
-    <ul>
-        {% for svg_obj, thumbnail in images %}
-        <li>
-            <a href="{% url 'obrazkiApp:svg_detail' svg_obj.id %}">
-                {{ svg_obj.name }}
-            </a>
-            <div style="width: 50px; height: 50px;">
-                <a href="{% url 'obrazkiApp:svg_detail' svg_obj.id %}">
-                    {% load svg %}
-                    <p>{% svg thumbnail %}</p>
-                </a>
+            <div class="m-1">
+                {%if request.GET.tag %}
+                <p>Showing articles with tag: {{request.GET.tag}}</p>
+                <a href="{% url 'obrazkiApp:svg_list'%}" class="btn btn-sm btn-outline-secondary">Remove Tag Filter</a>
+                {%else %}
+                <p>No Tag Filter - showing all images.</span></p>
+                {%endif%}
             </div>
+
+
+            <h2 class="m-lg-1">List of available svg images:</h2>
+
+            {% if images %}
+
+            {% for svg_obj, thumbnail in images %}
+            <div class="row mb-4 border-top m-lg-1">
+                <div class="col">
+                    <a href="{% url 'obrazkiApp:svg_detail' svg_obj.id %}">
+                        <h4>{{ svg_obj.name }}</h4>
+                    </a>
+                    <div style="width: 50px; height: 50px;">
+                        <a href="{% url 'obrazkiApp:svg_detail' svg_obj.id %}">
+                            {% load svg %}
+                            <p>{% svg thumbnail %}</p>
+                        </a>
+                    </div>
+                    <br>
+                    {%if svg_obj.tags %}
+                    <h6>tags: </h6>
+                    <div class="row">
+                        <div class="col">
+                            {%for svg_tag in svg_obj.tags.all %}
+                            <a href="{% url 'obrazkiApp:svg_list'%}?tag={{svg_tag}}"
+                                class="btn btn-sm btn-outline-secondary">
+                                {{svg_tag}}
+                            </a>
+                            {%endfor %}
+                        </div>
+                    </div>
+                    {%endif%}
+
+                </div>
+            </div>
+            {% endfor %}
+
+
+            {% else %}
+            <p>No svg images are available.</p>
+            {% endif %}
+
             <br>
-        </li>
-        {% endfor %}
-    </ul>
-    {% else %}
-    <p>No svg images are available.</p>
-    {% endif %}
 
-    {% if images.has_previous %}
-    <a href="?page=1">&laquo; First</a> 
-    <a href="?page={{images.previous_page_number}}">Previous</a>
-    {% endif %}
+            {% if images.has_previous %}
+            <a href="?page=1">&laquo; First</a>
+            <a href="?page={{images.previous_page_number}}">Previous</a>
+            {% endif %}
 
-    Page {{images.number}} of {{images.paginator.num_pages}}.
+            Page {{images.number}} of {{images.paginator.num_pages}}.
 
-    {% if images.has_next %}
-    <a href="?page={{images.next_page_number}}">Next</a>
-    <a href="?page={{images.paginator.num_pages}}">Last &raquo;</a>
-    {% endif %}
+            {% if images.has_next %}
+            <a href="?page={{images.next_page_number}}">Next</a>
+            <a href="?page={{images.paginator.num_pages}}">Last &raquo;</a>
+            {% endif %}
+
+        </div>
+    </div>
 </body>
 
 </html>
