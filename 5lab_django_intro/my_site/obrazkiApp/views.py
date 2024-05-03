@@ -46,13 +46,34 @@ def make_svgobject_thumbnail_double_list(svg_objects):
     double_lst = list(zip(svg_objects, thumbnails_lst))
     return double_lst
 
-def list_svg_images(request):
+def make_sorted_and_tagged_svg_list(tag_obj, sorted_obj):
+    res_lst = []
+    for svg in sorted_obj:
+        if svg in tag_obj:
+            res_lst.append(svg)
+    return res_lst
 
+def list_svg_images(request):
+    # Sprawdzamy czy dostalismy parametr sort, jesli tak to sprawdzamy czy jest 
+    # on rowny 0 lub 1 i sortujemy albo od najstarszej daty do najnowszej 
+    # (increasing), albo od najnowszej do najstarszej (decreasing)
+    sort = request.GET.get("sort")
+    sorted_obj = []
+    if (sort):
+        if sort != "2":
+            if sort == "1":
+                sorted_obj = SVG_image.objects.all().order_by('-pub_date')
+            else:
+                sorted_obj = SVG_image.objects.all().order_by('pub_date')
+    
     tag = request.GET.get("tag")
     if (tag):
         svg_objects = SVG_image.objects.filter(tags__name__in=[tag])
     else:
         svg_objects = SVG_image.objects.all()
+
+    if sorted_obj != []:
+        svg_objects = make_sorted_and_tagged_svg_list(svg_objects, sorted_obj)
 
     double_lst = make_svgobject_thumbnail_double_list(svg_objects)
     make_svg_thumbnails(svg_objects)

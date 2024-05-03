@@ -4,6 +4,8 @@
 {% extends 'loginApp/base.html' %} 
 
 {% block content %}
+<div class="p-2 m-1">
+
     {% for message in messages %}
         <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
     {% endfor %}
@@ -26,4 +28,5 @@
             Return to HOME page
         </button>
     </a>
+</div>
 {% endblock content %}
