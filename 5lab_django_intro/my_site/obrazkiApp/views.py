@@ -85,7 +85,13 @@ def svg_form_view(request):
 
 @login_required
 def svg_modifiable_list(request):
-    svg_objects = SVG_image.objects.all()
+
+    tag = request.GET.get("tag")
+    if (tag):
+        svg_objects = SVG_image.objects.filter(tags__name__in=[tag])
+    else:
+        svg_objects = SVG_image.objects.all()
+
     modifiable_lst = []
 
     for svg in svg_objects:
@@ -99,7 +105,7 @@ def svg_modifiable_list(request):
     page_number = request.GET.get('page')
     images = pagin.get_page(page_number)
 
-    return render(request, 'obrazkiApp/svg_modifiable_list.html', {'images': images})
+    return render(request, 'obrazkiApp/svg_modifiable_list.html', {'images': images, "tags": Tag.objects.all()})
 
 
 def add_new_rect(request, file_path):
