@@ -1,12 +1,26 @@
 <!DOCTYPE html>
 <html>
-
+<head>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css"
+        integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+</head>
 <body>
     <a href="{% url 'obrazkiApp:index' %}">Return to obrazkiApp main page</a>
+
+     <div>
+        {%if request.GET.tag %}
+            <p>Showing articles with tag: {{request.GET.tag}}</p>
+            <a href="{% url 'obrazkiApp:svg_list'%}" class="btn btn-sm btn-outline-secondary">Remove Tag Filter</a>
+        {%else %}
+            <p>No Tag Filter - showing all articles.</span></p>
+        {%endif%}
+    </div>
+
+
     <h2>List of available svg images:</h2>
-    {% if double_lst %}
+    {% if images %}
     <ul>
-        {% for svg_obj, thumbnail in double_lst %}
+        {% for svg_obj, thumbnail in images %}
         <li>
             <a href="{% url 'obrazkiApp:svg_detail' svg_obj.id %}">
                 {{ svg_obj.name }}
@@ -23,6 +37,18 @@
     </ul>
     {% else %}
     <p>No svg images are available.</p>
+    {% endif %}
+
+    {% if images.has_previous %}
+    <a href="?page=1">&laquo; First</a> 
+    <a href="?page={{images.previous_page_number}}">Previous</a>
+    {% endif %}
+
+    Page {{images.number}} of {{images.paginator.num_pages}}.
+
+    {% if images.has_next %}
+    <a href="?page={{images.next_page_number}}">Next</a>
+    <a href="?page={{images.paginator.num_pages}}">Last &raquo;</a>
     {% endif %}
 </body>
 

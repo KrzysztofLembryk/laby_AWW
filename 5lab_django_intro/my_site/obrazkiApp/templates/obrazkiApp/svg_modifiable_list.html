@@ -4,9 +4,9 @@
 <body>
     <a href="{% url 'obrazkiApp:index' %}">Return to obrazkiApp main page</a>
     <h2>List of available svg images to modify:</h2>
-    {% if double_list %}
+    {% if images %}
     <ul>
-        {% for svg_obj, thumbnail in double_list %}
+        {% for svg_obj, thumbnail in images %}
         <li>
             <a href="{% url 'obrazkiApp:svg_modifiable_detail' svg_obj.id %}">
                 {{ svg_obj.name }}
@@ -23,6 +23,18 @@
     </ul>
     {% else %}
     <p>No svg images are available to be modified by You.</p>
+    {% endif %}
+
+    {% if images.has_previous %}
+    <a href="?page=1">&laquo; First</a> 
+    <a href="?page={{images.previous_page_number}}">Previous</a>
+    {% endif %}
+
+    Page {{images.number}} of {{images.paginator.num_pages}}.
+
+    {% if images.has_next %}
+    <a href="?page={{images.next_page_number}}">Next</a>
+    <a href="?page={{images.paginator.num_pages}}">Last &raquo;</a>
     {% endif %}
 </body>
 

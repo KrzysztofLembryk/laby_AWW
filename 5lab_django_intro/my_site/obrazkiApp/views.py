@@ -6,6 +6,7 @@ from django.contrib.auth.decorators import login_required
 import re
 import xml.etree.ElementTree as ET
 from django.shortcuts import redirect
+from django.core.paginator import Paginator
 
 ET.register_namespace('',"http://www.w3.org/2000/svg")
 
@@ -37,7 +38,7 @@ def make_svg_thumbnails(svg_objects):
         with open(thumbnail_path, "w") as file:
             file.write(resized_file)
 
-def make_svg_object_thumbnail_double_list(svg_objects):
+def make_svgobject_thumbnail_double_list(svg_objects):
     thumbnails_lst = []
     for svg in svg_objects:
         thumbnails_lst.append(settings.STATIC_ROOT / "svg" / (svg.name + "_thumb"))
@@ -46,11 +47,14 @@ def make_svg_object_thumbnail_double_list(svg_objects):
 
 def list_svg_images(request):
     svg_objects = SVG_image.objects.all()
-    double_lst = make_svg_object_thumbnail_double_list(svg_objects)
+    double_lst = make_svgobject_thumbnail_double_list(svg_objects)
 
     make_svg_thumbnails(svg_objects)
+    pagin = Paginator(double_lst, 2)
+    page_number = request.GET.get('page')
+    images = pagin.get_page(page_number)
 
-    return render(request, 'obrazkiApp/list_svg_images.html', {'double_lst': double_lst})
+    return render(request, 'obrazkiApp/list_svg_images.html', {"images": images})
 
 @login_required
 def svg_form_view(request):
@@ -82,9 +86,13 @@ def svg_modifiable_list(request):
             modifiable_lst.append(svg)
 
     make_svg_thumbnails(modifiable_lst)    
-    svg_obj_thumb_lst = make_svg_object_thumbnail_double_list(modifiable_lst)
+    svgobj_thumb_lst = make_svgobject_thumbnail_double_list(modifiable_lst)
 
-    return render(request, 'obrazkiApp/svg_modifiable_list.html', {'double_list': svg_obj_thumb_lst})
+    pagin = Paginator(svgobj_thumb_lst, 2)
+    page_number = request.GET.get('page')
+    images = pagin.get_page(page_number)
+
+    return render(request, 'obrazkiApp/svg_modifiable_list.html', {'images': images})
 
 
 def add_new_rect(request, file_path):
