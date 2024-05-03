@@ -17,11 +17,40 @@ def index(request):
 def svg_detail(request, svg_id):
     # trzeba bedzie zmienic na get_object_or_404
     svg_object = SVG_image.objects.get(id=svg_id)
+
     return render(request, 'obrazkiApp/svg_detail.html', {'svg_object': svg_object})
+
+def make_svg_thumbnails(svg_objects):
+    for svg_object in svg_objects:
+
+        main_svg_file_path = settings.STATIC_ROOT / "svg" / (svg_object.name + ".svg")
+        resized_file = ""
+
+        if os.path.exists(main_svg_file_path):
+            with open(main_svg_file_path, 'r') as file:
+                file_content = file.read()
+                svg_header_end_idx = file_content.find('>')
+                new_header = f'<svg width="{40}" height="{40}"  viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">'
+                resized_file = new_header + file_content[svg_header_end_idx + 1:]
+
+        thumbnail_path = settings.STATIC_ROOT / "svg" / (svg_object.name + "_thumb.svg")
+        with open(thumbnail_path, "w") as file:
+            file.write(resized_file)
+
+def make_svg_object_thumbnail_double_list(svg_objects):
+    thumbnails_lst = []
+    for svg in svg_objects:
+        thumbnails_lst.append(settings.STATIC_ROOT / "svg" / (svg.name + "_thumb"))
+    double_lst = list(zip(svg_objects, thumbnails_lst))
+    return double_lst
 
 def list_svg_images(request):
     svg_objects = SVG_image.objects.all()
-    return render(request, 'obrazkiApp/list_svg_images.html', {'svg_objects': svg_objects})
+    double_lst = make_svg_object_thumbnail_double_list(svg_objects)
+
+    make_svg_thumbnails(svg_objects)
+
+    return render(request, 'obrazkiApp/list_svg_images.html', {'double_lst': double_lst})
 
 @login_required
 def svg_form_view(request):
@@ -51,8 +80,11 @@ def svg_modifiable_list(request):
     for svg in svg_objects:
         if svg.permitted_users.filter(id=request.user.id):
             modifiable_lst.append(svg)
-    
-    return render(request, 'obrazkiApp/svg_modifiable_list.html', {'svg_objects': modifiable_lst})
+
+    make_svg_thumbnails(modifiable_lst)    
+    svg_obj_thumb_lst = make_svg_object_thumbnail_double_list(modifiable_lst)
+
+    return render(request, 'obrazkiApp/svg_modifiable_list.html', {'double_list': svg_obj_thumb_lst})
 
 
 def add_new_rect(request, file_path):
