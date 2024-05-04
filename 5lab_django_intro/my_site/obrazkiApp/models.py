@@ -22,7 +22,7 @@ class SVG_image(models.Model):
     
     def create_svg(self):
 
-        svg_header = f'<svg width="{self.width}" height="{self.height}"  viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">'
+        svg_header = f'<svg width="{self.width}" height="{self.height}"  viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">\n'
         svg_end = '</svg>' 
         svg_content = svg_header + svg_end
 
@@ -54,6 +54,13 @@ class SVG_image(models.Model):
         if os.path.exists(file_path):
             try:
                 os.remove(file_path)
+            except Exception as e:
+                print(e)
+
+        file_path_thumb = settings.STATIC_ROOT / "svg" / (self.name + "_thumb.svg")
+        if os.path.exists(file_path_thumb):
+            try:
+                os.remove(file_path_thumb)
             except Exception as e:
                 print(e)
 

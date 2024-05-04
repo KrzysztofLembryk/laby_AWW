@@ -77,7 +77,7 @@ def list_svg_images(request):
 
     double_lst = make_svgobject_thumbnail_double_list(svg_objects)
     make_svg_thumbnails(svg_objects)
-    pagin = Paginator(double_lst, 2)
+    pagin = Paginator(double_lst, 4)
     page_number = request.GET.get('page')
     images = pagin.get_page(page_number)
     tags = Tag.objects.all()
@@ -134,7 +134,7 @@ def svg_modifiable_list(request):
     make_svg_thumbnails(modifiable_lst)    
     svgobj_thumb_lst = make_svgobject_thumbnail_double_list(modifiable_lst)
 
-    pagin = Paginator(svgobj_thumb_lst, 2)
+    pagin = Paginator(svgobj_thumb_lst, 4)
     page_number = request.GET.get('page')
     images = pagin.get_page(page_number)
 
