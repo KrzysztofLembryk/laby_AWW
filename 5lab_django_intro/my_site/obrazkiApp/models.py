@@ -9,7 +9,7 @@ from taggit.managers import TaggableManager
 
 # Create your models here.
 class SVG_image(models.Model):
-    name = models.CharField(max_length=100)
+    name = models.CharField(max_length=100, unique=True)
     width = models.PositiveIntegerField()
     height = models.PositiveIntegerField()
     description = models.CharField(max_length=200, blank=True)
