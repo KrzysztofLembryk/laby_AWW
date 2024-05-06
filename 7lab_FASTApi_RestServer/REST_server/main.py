@@ -1,11 +1,12 @@
 from typing import Annotated, List, Dict
 from pydantic import BaseModel
-from fastapi import FastAPI, Form, Depends
+from fastapi import FastAPI, Form, Depends, Request
 from collections import Counter
 from .database import Base, engine, SessionLocal
 from sqlalchemy.orm import Session, sessionmaker, joinedload
 from . import models
 from collections import Counter
+import os
 
 
 app = FastAPI()
@@ -62,15 +63,43 @@ def get_images_by_tag(tag: int, db: Session = Depends(get_db)):
 
     return svg_names
 
+
+def delete_svg_files(name: str):
+    root_file_path = '../5lab_django_intro/my_site/static/svg/' 
+    file_path = root_file_path + name + '.svg'
+
+    if os.path.exists(file_path):
+        try:
+            os.remove(file_path)
+        except Exception as e:
+            print(e)
+
+    file_path_thumb = root_file_path + name + "_thumb.svg"
+    if os.path.exists(file_path_thumb):
+        try:
+            os.remove(file_path_thumb)
+        except Exception as e:
+            print(e)
+
 class ImagesToDelete(BaseModel):
     ids: List[int]
 
-@app.delete("/images/del/")
-def delete_images(images_to_delete: ImagesToDelete, db: Session = Depends(get_db)):
-    for id in images_to_delete.ids:
+
+# def main(payload: Dict[Any, Any]):
+@app.post("/images/del")
+async def delete_images(imgs: Dict, db: Session = Depends(get_db)):
+    # req_json = dict(req.query_params)
+    id_lst= []
+    for id in imgs.values():
+        id_lst.append(id)
+        query = db.query(models.ObrazkiAppSvgImage).filter(models.ObrazkiAppSvgImage.id == id)
+
+        delete_svg_files(query[0].name)
+
         db.query(models.ObrazkiAppSvgImage).filter(models.ObrazkiAppSvgImage.id == id).delete()
         db.commit()
-    return {"Images deleted": images_to_delete}
+
+    return {"Images deleted": id_lst}
 
 
 @app.get("/tags")
@@ -90,8 +119,3 @@ def list_tags(db: Session = Depends(get_db)):
         tag_counter[tag["tag_name"]] += 1
 
     return tag_counter
-
-# @app.get("/tag")
-# def list_tags():
-#     tag_counter = Counter(tag for image in images for tag in image.tags)
-#     return dict(tag_counter)
