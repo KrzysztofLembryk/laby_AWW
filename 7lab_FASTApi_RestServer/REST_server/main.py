@@ -31,13 +31,18 @@ def get_svg_imgs(db: Session = Depends(get_db)):
 def get_images(db: Session = Depends(get_db)):
     # Najpierw laczymy nazwy tagow z tagged item
     query = db.query(models.TaggitTaggeditem, models.TaggitTag, models.ObrazkiAppSvgImage). \
-    join(models.TaggitTag). \
-    join(models.ObrazkiAppSvgImage).all()
+    join(models.TaggitTag, models.TaggitTaggeditem.tag_id == models.TaggitTag.id). \
+    join(models.ObrazkiAppSvgImage, models.TaggitTaggeditem.object_id == models.ObrazkiAppSvgImage.id).all()
     res = []
     for elem in query:
-        x = {"tag_id": elem[1].id, "tag_name": elem[1].name, "object_id": elem[0].object_id, "image_name": elem[2].name}
+        x = {"image_name": elem[2].name, "tag_name": elem[1].name}
         res.append(x)
-    return res
+    
+    svg_names = {obj["image_name"]: [] for obj in res}
+    for obj in res:
+        svg_names[obj["image_name"]].append(obj["tag_name"])
+
+    return svg_names
 
 
 @app.get("/tags")
