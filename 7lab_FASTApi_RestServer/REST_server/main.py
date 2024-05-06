@@ -1,4 +1,4 @@
-from typing import Annotated, List
+from typing import Annotated, List, Dict
 from pydantic import BaseModel
 from fastapi import FastAPI, Form, Depends
 from collections import Counter
@@ -43,6 +43,34 @@ def get_images(db: Session = Depends(get_db)):
         svg_names[obj["image_name"]].append(obj["tag_name"])
 
     return svg_names
+
+@app.get("/images/{tag}")
+def get_images_by_tag(tag: int, db: Session = Depends(get_db)):
+
+    query = db.query(models.TaggitTaggeditem, models.TaggitTag, models.ObrazkiAppSvgImage). \
+    join(models.TaggitTag, models.TaggitTaggeditem.tag_id == models.TaggitTag.id). \
+    join(models.ObrazkiAppSvgImage, models.TaggitTaggeditem.object_id == models.ObrazkiAppSvgImage.id).filter(models.TaggitTag.id == tag).all()
+
+    res = []
+    for elem in query:
+        x = {"image_name": elem[2].name, "tag_name": elem[1].name}
+        res.append(x)
+    
+    svg_names = {obj["image_name"]: [] for obj in res}
+    for obj in res:
+        svg_names[obj["image_name"]].append(obj["tag_name"])
+
+    return svg_names
+
+class ImagesToDelete(BaseModel):
+    ids: List[int]
+
+@app.delete("/images/del/")
+def delete_images(images_to_delete: ImagesToDelete, db: Session = Depends(get_db)):
+    for id in images_to_delete.ids:
+        db.query(models.ObrazkiAppSvgImage).filter(models.ObrazkiAppSvgImage.id == id).delete()
+        db.commit()
+    return {"Images deleted": images_to_delete}
 
 
 @app.get("/tags")

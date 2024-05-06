@@ -85,11 +85,6 @@ class ObrazkiAppSvgImage(Base):
     height = mapped_column(Integer, nullable=False)
     description = mapped_column(String(200), nullable=False)
     pub_date = mapped_column(DateTime, nullable=False)
-    # tag_id = mapped_column(ForeignKey('taggit_tag.id'), nullable=False)
-
-    # content_type: Mapped['DjangoContentType'] = relationship('DjangoContentType', back_populates='taggit_taggeditem')
-
-    # tag: Mapped['TaggitTag'] = relationship('TaggitTag', back_populates='taggit_taggeditem')
 
     obrazkiApp_svg_image_permitted_users: Mapped[List['ObrazkiAppSvgImagePermittedUsers']] = relationship('ObrazkiAppSvgImagePermittedUsers', uselist=True, back_populates='svg_image')
 
