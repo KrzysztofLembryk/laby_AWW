@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>8lab TypeScript index</title>
+
+    <style>
+        svg {
+            height: 500px;
+            width: 500px;
+        }
+
+        polygon {
+            stroke: purple;
+            stroke-width: 1;
+            cursor: pointer;
+        }
+
+        polygon.down {
+            fill: red;
+        }
+
+        polygon.up {
+            fill: yellow;
+        }
+    </style>
+</head>
+
+<body>
+    <script src="main.js"></script>
+    <br>
+    <svg>
+        <g transform="translate(75 0)">
+            <polygon class="up" points="75,0 0,150 150,150" onclick="alert('1')" />
+        </g>
+        <g transform="translate(0 150)">
+            <polygon class="up" points="75,0 0,150 150,150" onclick="alert('2')" />
+        </g>
+        <g transform="translate(75 150)">
+            <polygon class="down" points="0,0 150,0 75,150" onclick="alert('3')" />
+        </g>
+        <g transform="translate(150 150)">
+            <polygon class="up" points="75,0 0,150 150,150" onclick="alert('4')" />
+        </g>
+    </svg>
+
+</body>
+
+</html>

@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SVG Page</title>
+</head>
+
+<body>
+
+    <h3>Dodaj nowy prostokąt:</h3>
+    <form id="rectangleForm">
+        <!-- <label for="name">name:</label>
+        <input type="string" id="name" name="name" required><br> -->
+
+        <label for="x1">X1:</label>
+        <input type="number" id="x1" name="x1" min="0" required><br>
+
+        <label for="y1">Y1:</label>
+        <input type="number" id="y1" name="y1" min="0" required><br>
+
+        <label for="x2">X2:</label>
+        <input type="number" id="x2" name="x2" min="0" required><br>
+
+        <label for="y2">Y2:</label>
+        <input type="number" id="y2" name="y2" min="0" required><br>
+
+        <label for="fill">Fill:</label>
+        <input type="color" id="fill" name="fill" required><br>
+        <br>
+        <label for="stroke">Stroke Fill:</label>
+        <input type="color" id="stroke" name="stroke" value="black"><br>
+        <br>
+        <label for="stroke_width">Stroke Width:</label>
+        <input type="number" id="stroke_width" name="stroke_width" min="0" value="0"><br>
+        <!-- <input type="submit" value="Submit"> -->
+        <button type="button" onclick="handleFormSubmit()">Add Rect</button>
+    </form>
+
+    <div id="resultSVG"></div>
+
+</body>
+
+<script src="svgHandler.js"></script>
+
+</html>
