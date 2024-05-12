@@ -9,7 +9,7 @@
 
 <body>
 
-    <h3>Dodaj nowy prostokąt:</h3>
+    <h3>Dodaj nowy prostokąt NORMALNY SPOSÓB:</h3>
     <form id="rectangleForm">
         <!-- <label for="name">name:</label>
         <input type="string" id="name" name="name" required><br> -->
@@ -38,6 +38,18 @@
         <button type="button" onclick="handleFormSubmit()">Add Rect</button>
     </form>
 
+    <br>
+
+    <h3>Dodaj nowy prostokąt - NOWY SPOSÓB (wybierz jego kolor):</h3>
+    <form id="colorForm">
+        <label for="pickedColor">Fill:</label>
+        <input type="color" id="pickedColor" value="black">
+        <br>
+        <button type="button" onclick="handleColorChoosing()">Choose Color</button>
+    </form>
+
+    <h4>Obrazek SVG:</h4>
+    <br>
     <div id="resultSVG"></div>
 
     <br>

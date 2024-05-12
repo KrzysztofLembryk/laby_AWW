@@ -1,4 +1,12 @@
 var rectIdToRemove = -1;
+var colorChosen = "black";
+function handleColorChoosing() {
+    var form = document.forms["colorForm"];
+    var pickedColor = form["pickedColor"];
+    if (pickedColor === null)
+        return;
+    colorChosen = pickedColor.value;
+}
 function removeClicked() {
     if (rectIdToRemove === -1)
         return;
@@ -36,21 +44,20 @@ var ClickedOn = /** @class */ (function () {
 }());
 var Rectangle = /** @class */ (function () {
     function Rectangle(x1, y1, x2, y2, fill, stroke, strokeWidth) {
+        if (stroke === void 0) { stroke = ""; }
+        if (strokeWidth === void 0) { strokeWidth = 0; }
         this.id = 0;
-        this.fill = "black";
-        this.stroke = "";
-        this.strokeWidth = 0;
         this.clickedHandler = new ClickedOn();
         this.x1 = x1;
         this.y1 = y1;
-        if (x2 <= x1) {
-            x2 = x1 + 10;
-        }
-        if (y2 <= y1) {
-            y2 = y1 + 10;
-        }
-        this.width = x2 - x1;
-        this.height = y2 - y1;
+        // if (x2 <= x1) {
+        //     x2 = x1 + 10;
+        // }
+        // if (y2 <= y1) {
+        //     y2 = y1 + 10;
+        // }
+        this.width = Math.abs(x2 - x1);
+        this.height = Math.abs(y2 - y1);
         this.fill = fill;
         this.stroke = stroke;
         this.strokeWidth = strokeWidth;
@@ -62,6 +69,44 @@ var Rectangle = /** @class */ (function () {
     };
     return Rectangle;
 }());
+var mouseClicked = false;
+// Do onmousedown, onmousemove, onmouseup w svg trzeba przekazać event!!!
+function onMouseDownHandler(event) {
+    var mouseX = event.clientX;
+    var mouseY = event.clientY;
+    console.log("Mouse down at: " + mouseX + " " + mouseY);
+    mouseClicked = true;
+    var rect = new Rectangle(mouseX, mouseY, mouseX, mouseY, colorChosen);
+    svgImages[0].addRectangle(rect);
+    console.log(svgImages[0].toString());
+}
+function onMouseMoveHandler(event) {
+    var mouseX = event.clientX;
+    var mouseY = event.clientY;
+    if (mouseClicked) {
+        var rect = svgImages[0].rects[svgImages[0].rects.length - 1];
+        rect.width = Math.abs(rect.x1 - mouseX);
+        rect.height = Math.abs(rect.y1 - mouseY);
+        rect.x1 = Math.min(rect.x1, mouseX);
+        rect.y1 = Math.min(rect.y1, mouseY);
+        document.querySelector("#resultSVG").innerHTML = svgImages[0].toString();
+    }
+}
+function onMouseUpHandler(event) {
+    var mouseX = event.clientX;
+    var mouseY = event.clientY;
+    mouseClicked = false;
+    var rect = svgImages[0].rects[svgImages[0].rects.length - 1];
+    if (rect.x1 === mouseX && rect.y1 === mouseY) {
+        svgImages[0].removeRectangle(svgImages[0].rects.length - 1);
+        return;
+    }
+    rect.width = Math.abs(rect.x1 - mouseX);
+    rect.height = Math.abs(rect.y1 - mouseY);
+    rect.x1 = Math.min(rect.x1, mouseX);
+    rect.y1 = Math.min(rect.y1, mouseY);
+    document.querySelector("#resultSVG").innerHTML = svgImages[0].toString();
+}
 var SVGHandler = /** @class */ (function () {
     function SVGHandler(name, width, height, rects) {
         this.rects = [];
@@ -90,7 +135,7 @@ var SVGHandler = /** @class */ (function () {
         return false;
     };
     SVGHandler.prototype.toString = function () {
-        var svg = "<svg width=\"".concat(this.width, "\" height=\"").concat(this.height, "\" style=\"border:1px solid black\">");
+        var svg = "<svg width=\"".concat(this.width, "\" height=\"").concat(this.height, "\" style=\"border:1px solid black\" id=\"svgHeader\" onmousedown=\"onMouseDownHandler(event)\" onmousemove=\"onMouseMoveHandler(event)\" onmouseup=\"onMouseUpHandler(event)\">");
         for (var i = 0; i < this.rects.length; i++) {
             svg += this.rects[i].toString();
             svg += "\n";
@@ -102,9 +147,7 @@ var SVGHandler = /** @class */ (function () {
 }());
 var svgImages = [];
 function handleFormSubmit() {
-    // event.preventDefault();
     var form = document.forms["rectangleForm"];
-    // let svgName = form["name"].value;
     var x1 = form["x1"].value;
     var y1 = form["y1"].value;
     var x2 = form["x2"].value;
@@ -113,7 +156,7 @@ function handleFormSubmit() {
     var stroke = form["stroke"].value;
     var strokeWidth = form["stroke_width"].value;
     var rect = new Rectangle(parseInt(x1), parseInt(y1), parseInt(x2), parseInt(y2), fill, stroke, parseInt(strokeWidth));
-    var svg = new SVGHandler("svg1", 300, 300, []);
+    var svg = new SVGHandler("svg1", 250, 250, []);
     if (svgImages.length === 0)
         svgImages.push(svg);
     svgImages[0].addRectangle(rect);
@@ -128,4 +171,26 @@ function removeRectangle() {
     rectIdToRemove = -1;
     document.querySelector("#resultSVG").innerHTML = svgImages[0].toString();
     document.querySelector("#chosenRectID").innerHTML = "No rect chosen";
+}
+function drawRectangle(svgElement, color) {
+    var rect = null;
+    var startX, startY;
+    svgElement.addEventListener('mousedown', function (e) {
+        startX = e.clientX;
+        startY = e.clientY;
+        rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+        rect.setAttribute('fill', color);
+        svgElement.appendChild(rect);
+    });
+    svgElement.addEventListener('mousemove', function (e) {
+        if (!rect)
+            return;
+        rect.setAttribute('x', String(Math.min(e.clientX, startX)));
+        rect.setAttribute('y', String(Math.min(e.clientY, startY)));
+        rect.setAttribute('width', String(Math.abs(e.clientX - startX)));
+        rect.setAttribute('height', String(Math.abs(e.clientY - startY)));
+    });
+    svgElement.addEventListener('mouseup', function () {
+        rect = null;
+    });
 }
