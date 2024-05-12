@@ -6,7 +6,7 @@
 // block (denoted by {}).
 var x = 10;
 console.log(x);
-var message = "Hello, TypeScript!";
+var message = "test, TypeScript!";
 var heading = document.createElement("h1");
 heading.textContent = message;
 document.body.appendChild(heading);
