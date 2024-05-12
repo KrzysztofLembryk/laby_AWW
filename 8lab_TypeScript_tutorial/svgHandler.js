@@ -1,3 +1,4 @@
+var _a;
 var rectIdToRemove = -1;
 var colorChosen = "black";
 function handleColorChoosing() {
@@ -28,6 +29,10 @@ function setRectRemoveID(id) {
         document.querySelector("#resultSVG").innerHTML = svgImages[0].toString();
     }
 }
+function removeAllRectangles() {
+    svgImages[0].rects = [];
+    document.querySelector("#resultSVG").innerHTML = svgImages[0].toString();
+}
 var ClickedOn = /** @class */ (function () {
     function ClickedOn() {
         this.stroke = "#ff1dcf";
@@ -50,12 +55,6 @@ var Rectangle = /** @class */ (function () {
         this.clickedHandler = new ClickedOn();
         this.x1 = x1;
         this.y1 = y1;
-        // if (x2 <= x1) {
-        //     x2 = x1 + 10;
-        // }
-        // if (y2 <= y1) {
-        //     y2 = y1 + 10;
-        // }
         this.width = Math.abs(x2 - x1);
         this.height = Math.abs(y2 - y1);
         this.fill = fill;
@@ -69,12 +68,23 @@ var Rectangle = /** @class */ (function () {
     };
     return Rectangle;
 }());
+function getPos(el) {
+    // yay readability
+    for (var lx = 0, ly = 0; el != null; lx += el.offsetLeft, ly += el.offsetTop, el = el.offsetParent)
+        ;
+    return { x: lx, y: ly };
+}
 var mouseClicked = false;
+var boundClientRect = (_a = document.getElementById("resultSVG")) === null || _a === void 0 ? void 0 : _a.getClientRects();
+// let div_offset = document.getElementById('chosenRectID').getBoundingClientRect();
+// let div_top = div_offset.top;
+// let div_left = div_offset.left;
+// console.log("div top: " + div_top + " div left: " + div_left);
+var offset_Y = boundClientRect[0].top;
 // Do onmousedown, onmousemove, onmouseup w svg trzeba przekazać event!!!
 function onMouseDownHandler(event) {
     var mouseX = event.clientX;
-    var mouseY = event.clientY;
-    console.log("Mouse down at: " + mouseX + " " + mouseY);
+    var mouseY = event.clientY - offset_Y;
     mouseClicked = true;
     var rect = new Rectangle(mouseX, mouseY, mouseX, mouseY, colorChosen);
     svgImages[0].addRectangle(rect);
@@ -82,7 +92,7 @@ function onMouseDownHandler(event) {
 }
 function onMouseMoveHandler(event) {
     var mouseX = event.clientX;
-    var mouseY = event.clientY;
+    var mouseY = event.clientY - offset_Y;
     if (mouseClicked) {
         var rect = svgImages[0].rects[svgImages[0].rects.length - 1];
         rect.width = Math.abs(rect.x1 - mouseX);
@@ -94,7 +104,7 @@ function onMouseMoveHandler(event) {
 }
 function onMouseUpHandler(event) {
     var mouseX = event.clientX;
-    var mouseY = event.clientY;
+    var mouseY = event.clientY - offset_Y;
     mouseClicked = false;
     var rect = svgImages[0].rects[svgImages[0].rects.length - 1];
     if (rect.x1 === mouseX && rect.y1 === mouseY) {
@@ -156,7 +166,7 @@ function handleFormSubmit() {
     var stroke = form["stroke"].value;
     var strokeWidth = form["stroke_width"].value;
     var rect = new Rectangle(parseInt(x1), parseInt(y1), parseInt(x2), parseInt(y2), fill, stroke, parseInt(strokeWidth));
-    var svg = new SVGHandler("svg1", 250, 250, []);
+    var svg = new SVGHandler("svg1", 250, 200, []);
     if (svgImages.length === 0)
         svgImages.push(svg);
     svgImages[0].addRectangle(rect);

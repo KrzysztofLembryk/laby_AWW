@@ -9,54 +9,47 @@
 
 <body>
     <a href="index.html">Wróć</a>
-    <br>
-    <h3>Dodaj nowy prostokąt NORMALNY SPOSÓB:</h3>
+    <h5>Dodaj nowy prostokąt NORMALNY SPOSÓB:</h5>
     <form id="rectangleForm">
-        <!-- <label for="name">name:</label>
-        <input type="string" id="name" name="name" required><br> -->
 
         <label for="x1">X1:</label>
-        <input type="number" id="x1" name="x1" min="0" required><br>
-
+        <input type="number" id="x1" name="x1" min="0" required>
         <label for="y1">Y1:</label>
-        <input type="number" id="y1" name="y1" min="0" required><br>
-
+        <input type="number" id="y1" name="y1" min="0" required>
+        <br>
         <label for="x2">X2:</label>
-        <input type="number" id="x2" name="x2" min="0" required><br>
+        <input type="number" id="x2" name="x2" min="0" required>
 
         <label for="y2">Y2:</label>
-        <input type="number" id="y2" name="y2" min="0" required><br>
+        <input type="number" id="y2" name="y2" min="0" required>
+        <br>
 
         <label for="fill">Fill:</label>
-        <input type="color" id="fill" name="fill" required><br>
-        <br>
+        <input type="color" id="fill" name="fill" required>
+
         <label for="stroke">Stroke Fill:</label>
-        <input type="color" id="stroke" name="stroke" value="black"><br>
-        <br>
+        <input type="color" id="stroke" name="stroke" value="black">
+
         <label for="stroke_width">Stroke Width:</label>
-        <input type="number" id="stroke_width" name="stroke_width" min="0" value="0"><br>
-        <!-- <input type="submit" value="Submit"> -->
+        <input type="number" id="stroke_width" name="stroke_width" min="0" value="0">
+        <br>
         <button type="button" onclick="handleFormSubmit()">Add Rect</button>
     </form>
 
-    <br>
-
-    <h3>Dodaj nowy prostokąt - NOWY SPOSÓB (wybierz jego kolor):</h3>
+    <h5>Dodaj nowy prostokąt - NOWY SPOSÓB (wybierz jego kolor):</h5>
     <form id="colorForm">
         <label for="pickedColor">Fill:</label>
         <input type="color" id="pickedColor" value="black">
-        <br>
         <button type="button" onclick="handleColorChoosing()">Choose Color</button>
     </form>
 
-    <h4>Obrazek SVG:</h4>
-    <br>
-    <div id="resultSVG"></div>
-
-    <br>
+    <h5>Obrazek SVG:</h5>
+    <div id="resultSVG" ></div>
 
     <div id="chosenRectID" onload="displayChosenRectID()"></div>
     <button type="button" onclick="removeRectangle()">Remove clicked RECT?</button>
+    <br>
+    <button type="button" onclick="removeAllRectangles()">Remove ALL RECTS?</button>
     <br>
     <button type="button" onclick="removeClicked()">Remove checked</button>
 </body>

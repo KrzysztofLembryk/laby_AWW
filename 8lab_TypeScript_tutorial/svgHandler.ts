@@ -35,6 +35,11 @@ function setRectRemoveID(id: number): void {
     }
 }
 
+function removeAllRectangles(): void {
+    svgImages[0].rects = [];
+    document.querySelector("#resultSVG").innerHTML = svgImages[0].toString();
+}
+
 class ClickedOn {
     isClicked: boolean;
     private stroke: string = "#ff1dcf";
@@ -67,12 +72,6 @@ class Rectangle {
     constructor(x1: number, y1: number, x2: number, y2: number, fill: string, stroke: string = "", strokeWidth: number = 0) {
         this.x1 = x1;
         this.y1 = y1;
-        // if (x2 <= x1) {
-        //     x2 = x1 + 10;
-        // }
-        // if (y2 <= y1) {
-        //     y2 = y1 + 10;
-        // }
         this.width = Math.abs(x2 - x1);
         this.height = Math.abs(y2 - y1);
         this.fill = fill;
@@ -88,23 +87,32 @@ class Rectangle {
     }
 }
 
+function getPos(el) {
+    // yay readability
+    for (var lx=0, ly=0;
+         el != null;
+         lx += el.offsetLeft, ly += el.offsetTop, el = el.offsetParent);
+    return {x: lx,y: ly};
+}
+
 let mouseClicked: boolean = false;
+let boundClientRect = document.getElementById("resultSVG")?.getClientRects();
+let offset_Y = boundClientRect[0].top;
 
 // Do onmousedown, onmousemove, onmouseup w svg trzeba przekazać event!!!
 function onMouseDownHandler(event: MouseEvent): void {
     let mouseX = event.clientX;
-    let mouseY = event.clientY;
-    console.log("Mouse down at: " + mouseX + " " + mouseY);
+    let mouseY = event.clientY - offset_Y;
     mouseClicked = true;
+
     let rect = new Rectangle(mouseX, mouseY, mouseX, mouseY, colorChosen);
     svgImages[0].addRectangle(rect);
     console.log(svgImages[0].toString());
-
 }
 
 function onMouseMoveHandler(event: MouseEvent): void {
     let mouseX = event.clientX;
-    let mouseY = event.clientY;
+    let mouseY = event.clientY - offset_Y;
     if (mouseClicked)
     {
         let rect = svgImages[0].rects[svgImages[0].rects.length - 1];
@@ -119,7 +127,7 @@ function onMouseMoveHandler(event: MouseEvent): void {
 
 function onMouseUpHandler(event: MouseEvent): void {
     let mouseX = event.clientX;
-    let mouseY = event.clientY;
+    let mouseY = event.clientY - offset_Y;
     mouseClicked = false;
     let rect = svgImages[0].rects[svgImages[0].rects.length - 1];
     if (rect.x1 === mouseX && rect.y1 === mouseY) {
@@ -198,7 +206,7 @@ function handleFormSubmit(): void
     let strokeWidth = form["stroke_width"].value;
 
     let rect = new Rectangle(parseInt(x1), parseInt(y1), parseInt(x2), parseInt(y2), fill, stroke, parseInt(strokeWidth));
-    let svg = new SVGHandler("svg1", 250, 250, []);
+    let svg = new SVGHandler("svg1", 250, 200, []);
 
     if (svgImages.length === 0)
         svgImages.push(svg);
