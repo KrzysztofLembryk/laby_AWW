@@ -84,7 +84,7 @@ class Rectangle {
 }
 let mouseClicked = false;
 let boundClientRect = (_a = document.getElementById("resultSVG")) === null || _a === void 0 ? void 0 : _a.getClientRects();
-let offset_Y = 320; //boundClientRect[0].top;
+let offset_Y = 328; //boundClientRect[0].top;
 // Do onmousedown, onmousemove, onmouseup w svg trzeba przekazać event!!!
 function onMouseDownHandler(event) {
     let mouseX = event.clientX;
