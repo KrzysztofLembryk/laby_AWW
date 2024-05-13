@@ -2,7 +2,8 @@ let rectIdToRemove: number = -1;
 let colorChosen: string = "black";
 
 function handleColorChoosing(): void {
-    let form = document.forms["colorForm"];
+    let form = document.querySelector("#colorForm") as HTMLFormElement;
+    // let form = document.forms["colorForm"];
     if (form === null)
         return;
     let pickedColor = form["pickedColor"];
@@ -17,29 +18,43 @@ function removeClicked(): void {
 
     svgImages[0].rects[rectIdToRemove].clickedHandler.isClicked = false;
     rectIdToRemove = -1;
-
-    document.querySelector("#chosenRectID").innerHTML = "No rect chosen"
-    document.querySelector("#resultSVG").innerHTML = svgImages[0].toString();
+    let chosenRect = document!.querySelector("#chosenRectID");
+    if (chosenRect !== null)
+        chosenRect.innerHTML = "No rect chosen";
+    // document!.querySelector("#chosenRectID").innerHTML = "No rect chosen"
+    let resultSVG = document!.querySelector("#resultSVG");
+    if (resultSVG !== null)
+        resultSVG.innerHTML = svgImages[0].toString();
+    // document!.querySelector("#resultSVG").innerHTML = svgImages[0].toString();
 }
 
 function setRectRemoveID(id: number): void {
     rectIdToRemove = id;
     if (rectIdToRemove === -1)
-        document.querySelector("#chosenRectID").innerHTML = "No rect chosen";
+    {
+        let chosenRect = document.querySelector("#chosenRectID");
+        chosenRect!.innerHTML = "No rect chosen";
+    }
     else {
         for (let i = 0; i < svgImages[0].rects.length; i++) {
             svgImages[0].rects[i].clickedHandler.isClicked = false;
         }
         svgImages[0].rects[rectIdToRemove].clickedHandler.isClicked = true;
 
-        document.querySelector("#chosenRectID").innerHTML = "Chosen rect ID: " + rectIdToRemove.toString();
-        document.querySelector("#resultSVG").innerHTML = svgImages[0].toString();
+        let chosenRect = document.querySelector("#chosenRectID");
+        chosenRect!.innerHTML = "Chosen rect ID: " + rectIdToRemove.toString();
+        // document.querySelector("#chosenRectID").innerHTML = "Chosen rect ID: " + rectIdToRemove.toString();
+        let resultSVG = document.querySelector("#resultSVG");
+        resultSVG!.innerHTML = svgImages[0].toString();
+        // document.querySelector("#resultSVG").innerHTML = svgImages[0].toString();
     }
 }
 
 function removeAllRectangles(): void {
     svgImages[0].rects = [];
-    document.querySelector("#resultSVG").innerHTML = svgImages[0].toString();
+    let resultSVG = document.querySelector("#resultSVG");
+    resultSVG!.innerHTML = svgImages[0].toString();
+    // document.querySelector("#resultSVG").innerHTML = svgImages[0].toString();
 }
 
 class ClickedOn {
@@ -116,7 +131,9 @@ function onMouseMoveHandler(event: MouseEvent): void {
         rect.x1 = Math.min(rect.x1, mouseX);
         rect.y1 = Math.min(rect.y1, mouseY);
 
-        document.querySelector("#resultSVG").innerHTML = svgImages[0].toString();
+        let resultSVG = document.querySelector("#resultSVG");
+        resultSVG!.innerHTML = svgImages[0].toString();
+        // document.querySelector("#resultSVG").innerHTML = svgImages[0].toString();
     }
 }
 
@@ -134,7 +151,9 @@ function onMouseUpHandler(event: MouseEvent): void {
     rect.x1 = Math.min(rect.x1, mouseX);
     rect.y1 = Math.min(rect.y1, mouseY);
 
-    document.querySelector("#resultSVG").innerHTML = svgImages[0].toString();
+    let resultSVG = document.querySelector("#resultSVG");
+    resultSVG!.innerHTML = svgImages[0].toString();
+    // document.querySelector("#resultSVG").innerHTML = svgImages[0].toString();
 }
 
 class SVGHandler {
@@ -201,7 +220,7 @@ let svgImages: SVGHandler[] = [];
 
 function handleFormSubmit(): void 
 {
-    let form = document.forms["rectangleForm"];
+    let form = document.querySelector("#rectangleForm") as HTMLFormElement;
     let x1 = form["x1"].value;
     let y1 = form["y1"].value;
     let x2 = form["x2"].value;
@@ -217,21 +236,28 @@ function handleFormSubmit(): void
         svgImages.push(svg);
 
     svgImages[0].addRectangle(rect);
-    document.querySelector("#resultSVG").innerHTML = svgImages[0].toString();
+    let resultSVG = document.querySelector("#resultSVG");
+    resultSVG!.innerHTML = svgImages[0].toString();
+    // document.querySelector("#resultSVG").innerHTML = svgImages[0].toString();
 }
 
 
 
 function removeRectangle(): void {
     if (rectIdToRemove === -1) {
-        document.querySelector("#chosenRectID").innerHTML = "No rect chosen";
+        let chosenRect = document.querySelector("#chosenRectID");
+        chosenRect!.innerHTML = "No rect chosen";
         return;
     }
     svgImages[0].removeRectangle(rectIdToRemove);
     rectIdToRemove = -1;
-
-    document.querySelector("#resultSVG").innerHTML = svgImages[0].toString();
-    document.querySelector("#chosenRectID").innerHTML = "No rect chosen";
+    
+    let resultSVG = document.querySelector("#resultSVG");
+    resultSVG!.innerHTML = svgImages[0].toString();
+    // document.querySelector("#resultSVG").innerHTML = svgImages[0].toString();
+    let chosenRect = document.querySelector("#chosenRectID");
+    chosenRect!.innerHTML = "No rect chosen";
+    // document.querySelector("#chosenRectID").innerHTML = "No rect chosen";
 }
 
 
