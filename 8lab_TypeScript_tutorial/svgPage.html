@@ -47,11 +47,13 @@
     <div id="resultSVG" ></div>
 
     <div id="chosenRectID" onload="displayChosenRectID()"></div>
-    <button type="button" onclick="removeRectangle()">Remove clicked RECT?</button>
-    <br>
-    <button type="button" onclick="removeAllRectangles()">Remove ALL RECTS?</button>
-    <br>
-    <button type="button" onclick="removeClicked()">Remove checked</button>
+    <div>
+        <button type="button" onclick="removeRectangle()">Remove clicked RECT?</button>
+        <button type="button" onclick="removeAllRectangles()">Remove ALL RECTS?</button>
+        <button type="button" onclick="removeClicked()">Remove checked</button>
+        <br>
+        <button type="button" onclick="saveSVG()">Save to database</button>
+    </div>
 </body>
 
 <script src="svgHandler.js"></script>

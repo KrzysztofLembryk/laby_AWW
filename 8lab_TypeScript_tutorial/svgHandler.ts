@@ -3,6 +3,8 @@ let colorChosen: string = "black";
 
 function handleColorChoosing(): void {
     let form = document.forms["colorForm"];
+    if (form === null)
+        return;
     let pickedColor = form["pickedColor"];
     if (pickedColor === null)
         return;
@@ -87,17 +89,10 @@ class Rectangle {
     }
 }
 
-function getPos(el) {
-    // yay readability
-    for (var lx=0, ly=0;
-         el != null;
-         lx += el.offsetLeft, ly += el.offsetTop, el = el.offsetParent);
-    return {x: lx,y: ly};
-}
 
 let mouseClicked: boolean = false;
 let boundClientRect = document.getElementById("resultSVG")?.getClientRects();
-let offset_Y = boundClientRect[0].top;
+let offset_Y = 320;//boundClientRect[0].top;
 
 // Do onmousedown, onmousemove, onmouseup w svg trzeba przekazać event!!!
 function onMouseDownHandler(event: MouseEvent): void {
@@ -189,6 +184,17 @@ class SVGHandler {
         return svg;
     }
 
+    toJson(): string {
+        let json = `{\n"width": ${this.width},\n"height": ${this.height},\n"rects": [\n`;
+        for (let i = 0; i < this.rects.length; i++) {
+            json += `{\n"x1": ${this.rects[i].x1},\n"y1": ${this.rects[i].y1},\n"width": ${this.rects[i].width},\n"height": ${this.rects[i].height},\n"fill": "${this.rects[i].fill}",\n"stroke": "${this.rects[i].stroke}",\n"strokeWidth": ${this.rects[i].strokeWidth}\n}`;
+            if (i !== this.rects.length - 1)
+                json += ",";
+            json += "\n";
+        }
+        json += "]\n}";
+        return json;
+    }
 
 }
 
@@ -256,4 +262,42 @@ function drawRectangle(svgElement: SVGSVGElement, color: string): void {
     });
 }
 
+function generateRandomFilename(): string {
+    let filename = '';
+    let characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
 
+    for (let i = 0; i < 8; i++) {
+        filename += characters.charAt(Math.floor(Math.random() * characters.length));
+    }
+
+    return filename;
+}
+
+// async function postData(final_json): Promise<void> {
+//     const response = await fetch('http://localhost:8000/save', {
+//         method: 'POST',
+//         headers: {
+//             'Content-Type': 'application/json'
+//         },
+//         body: final_json});
+//     const data = await response.json();
+//     console.log(data);
+// }
+
+function saveSVG(): void
+{
+    let svg_name = generateRandomFilename();
+    let svg = svgImages[0].toJson();
+    let final_json = {svg_name: svg};
+    let x = {"svg_name": svg_name, "width": 260, "height": 69};
+    const response = fetch('http://127.0.0.1:8000/save', {
+        method: 'POST',
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+        }, body: JSON.stringify(x)});
+    // body: JSON.stringify(final_json)
+    // let data = await response.json();
+    console.log(JSON.stringify(final_json));
+    return;
+}

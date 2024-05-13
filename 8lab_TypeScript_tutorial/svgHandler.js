@@ -3,6 +3,8 @@ var rectIdToRemove = -1;
 var colorChosen = "black";
 function handleColorChoosing() {
     var form = document.forms["colorForm"];
+    if (form === null)
+        return;
     var pickedColor = form["pickedColor"];
     if (pickedColor === null)
         return;
@@ -68,19 +70,9 @@ var Rectangle = /** @class */ (function () {
     };
     return Rectangle;
 }());
-function getPos(el) {
-    // yay readability
-    for (var lx = 0, ly = 0; el != null; lx += el.offsetLeft, ly += el.offsetTop, el = el.offsetParent)
-        ;
-    return { x: lx, y: ly };
-}
 var mouseClicked = false;
 var boundClientRect = (_a = document.getElementById("resultSVG")) === null || _a === void 0 ? void 0 : _a.getClientRects();
-// let div_offset = document.getElementById('chosenRectID').getBoundingClientRect();
-// let div_top = div_offset.top;
-// let div_left = div_offset.left;
-// console.log("div top: " + div_top + " div left: " + div_left);
-var offset_Y = boundClientRect[0].top;
+var offset_Y = 320; //boundClientRect[0].top;
 // Do onmousedown, onmousemove, onmouseup w svg trzeba przekazać event!!!
 function onMouseDownHandler(event) {
     var mouseX = event.clientX;
@@ -153,6 +145,17 @@ var SVGHandler = /** @class */ (function () {
         svg += "</svg>";
         return svg;
     };
+    SVGHandler.prototype.toJson = function () {
+        var json = "{\n\"width\": ".concat(this.width, ",\n\"height\": ").concat(this.height, ",\n\"rects\": [\n");
+        for (var i = 0; i < this.rects.length; i++) {
+            json += "{\n\"x1\": ".concat(this.rects[i].x1, ",\n\"y1\": ").concat(this.rects[i].y1, ",\n\"width\": ").concat(this.rects[i].width, ",\n\"height\": ").concat(this.rects[i].height, ",\n\"fill\": \"").concat(this.rects[i].fill, "\",\n\"stroke\": \"").concat(this.rects[i].stroke, "\",\n\"strokeWidth\": ").concat(this.rects[i].strokeWidth, "\n}");
+            if (i !== this.rects.length - 1)
+                json += ",";
+            json += "\n";
+        }
+        json += "]\n}";
+        return json;
+    };
     return SVGHandler;
 }());
 var svgImages = [];
@@ -203,4 +206,39 @@ function drawRectangle(svgElement, color) {
     svgElement.addEventListener('mouseup', function () {
         rect = null;
     });
+}
+function generateRandomFilename() {
+    var filename = '';
+    var characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    for (var i = 0; i < 8; i++) {
+        filename += characters.charAt(Math.floor(Math.random() * characters.length));
+    }
+    return filename;
+}
+// async function postData(final_json): Promise<void> {
+//     const response = await fetch('http://localhost:8000/save', {
+//         method: 'POST',
+//         headers: {
+//             'Content-Type': 'application/json'
+//         },
+//         body: final_json});
+//     const data = await response.json();
+//     console.log(data);
+// }
+function saveSVG() {
+    var svg_name = generateRandomFilename();
+    var svg = svgImages[0].toJson();
+    var final_json = { svg_name: svg };
+    var x = { "svg_name": svg_name, "width": 260, "height": 69 };
+    var response = fetch('http://127.0.0.1:8000/save', {
+        method: 'POST',
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+        }, body: JSON.stringify(x)
+    });
+    // body: JSON.stringify(final_json)
+    // let data = await response.json();
+    console.log(JSON.stringify(final_json));
+    return;
 }
