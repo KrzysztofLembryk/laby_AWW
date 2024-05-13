@@ -289,7 +289,7 @@ function saveSVG(): void
     let svg_name = generateRandomFilename();
     let svg = svgImages[0].toJson();
     let final_json = {svg_name: svg};
-    let x = {"svg_name": svg_name, "width": 260, "height": 69};
+    let x = {"name": svg_name, "width": 260, "height": 69, "rects": [{"x1": 10, "y1": 69}]};
     const response = fetch('http://127.0.0.1:8000/save', {
         method: 'POST',
         headers: {
@@ -298,6 +298,6 @@ function saveSVG(): void
         }, body: JSON.stringify(x)});
     // body: JSON.stringify(final_json)
     // let data = await response.json();
-    console.log(JSON.stringify(final_json));
+    console.log(JSON.stringify(x));
     return;
 }

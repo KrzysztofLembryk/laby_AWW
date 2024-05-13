@@ -20,14 +20,13 @@ def get_db():
 @app.post("/save")
 async def save(data_json: Dict, db: Session = Depends(get_db)):
     svg_name = ""
-    for key in data_json.keys():
-        svg_name = key
-        svg_image = models.SvgImage(name=key, svg=json.dumps(data_json[key]))
-        db.add(svg_image)
+    
+    svg_image = models.SvgImage(name=data_json["name"], width=data_json["width"], height=data_json["height"], svg=json.dumps(data_json["rects"]))
+    db.add(svg_image)
     db.commit()
     return {"message": "added svg image of name: " + svg_name}
 
 @app.get("/imgLst")
 async def img_lst(db: Session = Depends(get_db)):
     images = db.query(models.SvgImage).all()
-    return {image.name: json.loads(image.svg) for image in images}
+    return {image.name:{"width": image.width, "height": image.height, "rects": json.loads(image.svg)}  for image in images}
