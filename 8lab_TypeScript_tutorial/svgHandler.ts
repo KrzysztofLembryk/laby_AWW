@@ -185,14 +185,13 @@ class SVGHandler {
     }
 
     toJson(): string {
-        let json = `{\n"width": ${this.width},\n"height": ${this.height},\n"rects": [\n`;
+        let json = "["
         for (let i = 0; i < this.rects.length; i++) {
-            json += `{\n"x1": ${this.rects[i].x1},\n"y1": ${this.rects[i].y1},\n"width": ${this.rects[i].width},\n"height": ${this.rects[i].height},\n"fill": "${this.rects[i].fill}",\n"stroke": "${this.rects[i].stroke}",\n"strokeWidth": ${this.rects[i].strokeWidth}\n}`;
+            json += `{"x1": ${this.rects[i].x1},"y1": ${this.rects[i].y1},"width": ${this.rects[i].width},"height": ${this.rects[i].height},"fill": "${this.rects[i].fill}","stroke": "${this.rects[i].stroke}","strokeWidth": ${this.rects[i].strokeWidth}}`;
             if (i !== this.rects.length - 1)
                 json += ",";
-            json += "\n";
         }
-        json += "]\n}";
+        json += "]";
         return json;
     }
 
@@ -273,31 +272,24 @@ function generateRandomFilename(): string {
     return filename;
 }
 
-// async function postData(final_json): Promise<void> {
-//     const response = await fetch('http://localhost:8000/save', {
-//         method: 'POST',
-//         headers: {
-//             'Content-Type': 'application/json'
-//         },
-//         body: final_json});
-//     const data = await response.json();
-//     console.log(data);
-// }
-
 function saveSVG(): void
 {
     let svg_name = generateRandomFilename();
-    let svg = svgImages[0].toJson();
-    let final_json = {svg_name: svg};
-    let x = {"name": svg_name, "width": 260, "height": 69, "rects": [{"x1": 10, "y1": 69}]};
+    let lst: any[] = [];
+
+    for (let i = 0; i < svgImages[0].rects.length; i++) 
+    {
+        lst.push({"x1": svgImages[0].rects[i].x1, "y1": svgImages[0].rects[i].y1, "width": svgImages[0].rects[i].width, "height": svgImages[0].rects[i].height, "fill": svgImages[0].rects[i].fill, "stroke": svgImages[0].rects[i].stroke, "strokeWidth": svgImages[0].rects[i].strokeWidth});
+    }
+
+    let final_json = {"name": svg_name, "width": svgImages[0].width, "height": svgImages[0].height, "rects": lst};
+
     const response = fetch('http://127.0.0.1:8000/save', {
         method: 'POST',
         headers: {
             'Accept': 'application/json',
             'Content-Type': 'application/json'
-        }, body: JSON.stringify(x)});
-    // body: JSON.stringify(final_json)
-    // let data = await response.json();
-    console.log(JSON.stringify(x));
+        }, body: JSON.stringify(final_json)});
+
     return;
 }

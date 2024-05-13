@@ -146,14 +146,13 @@ var SVGHandler = /** @class */ (function () {
         return svg;
     };
     SVGHandler.prototype.toJson = function () {
-        var json = "{\n\"width\": ".concat(this.width, ",\n\"height\": ").concat(this.height, ",\n\"rects\": [\n");
+        var json = "[";
         for (var i = 0; i < this.rects.length; i++) {
-            json += "{\n\"x1\": ".concat(this.rects[i].x1, ",\n\"y1\": ").concat(this.rects[i].y1, ",\n\"width\": ").concat(this.rects[i].width, ",\n\"height\": ").concat(this.rects[i].height, ",\n\"fill\": \"").concat(this.rects[i].fill, "\",\n\"stroke\": \"").concat(this.rects[i].stroke, "\",\n\"strokeWidth\": ").concat(this.rects[i].strokeWidth, "\n}");
+            json += "{\"x1\": ".concat(this.rects[i].x1, ",\"y1\": ").concat(this.rects[i].y1, ",\"width\": ").concat(this.rects[i].width, ",\"height\": ").concat(this.rects[i].height, ",\"fill\": \"").concat(this.rects[i].fill, "\",\"stroke\": \"").concat(this.rects[i].stroke, "\",\"strokeWidth\": ").concat(this.rects[i].strokeWidth, "}");
             if (i !== this.rects.length - 1)
                 json += ",";
-            json += "\n";
         }
-        json += "]\n}";
+        json += "]";
         return json;
     };
     return SVGHandler;
@@ -227,18 +226,20 @@ function generateRandomFilename() {
 // }
 function saveSVG() {
     var svg_name = generateRandomFilename();
-    var svg = svgImages[0].toJson();
-    var final_json = { svg_name: svg };
-    var x = { "name": svg_name, "width": 260, "height": 69, "rects": [{ "x1": 10, "y1": 69 }] };
+    var rects = svgImages[0].toJson();
+    var lst = [];
+    for (var i = 0; i < svgImages[0].rects.length; i++) {
+        lst.push({ "x1": svgImages[0].rects[i].x1, "y1": svgImages[0].rects[i].y1, "width": svgImages[0].rects[i].width, "height": svgImages[0].rects[i].height, "fill": svgImages[0].rects[i].fill, "stroke": svgImages[0].rects[i].stroke, "strokeWidth": svgImages[0].rects[i].strokeWidth });
+    }
+    var final_json = { "name": svg_name, "width": svgImages[0].width, "height": svgImages[0].height, "rects": lst };
+    // let x = {"name": svg_name, "width": 260, "height": 69, "rects": [{"x1": 10, "y1": 69}]};
     var response = fetch('http://127.0.0.1:8000/save', {
         method: 'POST',
         headers: {
             'Accept': 'application/json',
             'Content-Type': 'application/json'
-        }, body: JSON.stringify(x)
+        }, body: JSON.stringify(final_json)
     });
-    // body: JSON.stringify(final_json)
-    // let data = await response.json();
-    console.log(JSON.stringify(x));
+    console.log(final_json);
     return;
 }
