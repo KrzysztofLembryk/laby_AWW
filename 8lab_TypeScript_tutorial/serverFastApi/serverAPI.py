@@ -7,6 +7,7 @@ from typing import List, Dict
 import json
 from . import models
 import random
+from datetime import datetime
 import time
 from fastapi import HTTPException
 
@@ -39,8 +40,9 @@ def too_big_svg():
     svg["width"] = 350
     svg["height"] = 350
     svg["rects"] = []
+    random.seed(datetime.now().timestamp())
 
-    for i in range(0, random.randint(800, 1500)):
+    for i in range(1, random.randint(10,120)):
         x1 = random.randint(0, 298)
         y1 = random.randint(0, 298)
         x2 = random.randint(x1 + 1, 300)
@@ -54,14 +56,16 @@ def too_big_svg():
                                 "y": y1,
                                 "width": width,
                                 "height": height,
-                                "color": color
+                                "fill": color,
+                                "stroke": "",
+                                "stroke-width": 0
                             })
     return svg
 
 def ret_random_good_svg(images):
     random_number = random.randint(0, len(images) - 1)
     image = images[random_number]
-    return {image.name:{"width": image.width, "height": image.height, "rects": json.loads(image.svg)}}
+    return {"width": image.width, "height": image.height, "rects": json.loads(image.svg)}
 
 def lengthy_generating_svg(images):
     time.sleep(5)
@@ -82,7 +86,8 @@ async def random_img(db: Session = Depends(get_db)):
     elif (random_number == 1):
         return json.dumps(lengthy_generating_svg(images))
     elif (random_number == 2):
-        return ret_500_error()
+        return json.dumps(too_big_svg())
+        # return ret_500_error()
     else:
         # Rozpatrzyc przypadek gdy zero svg obrazkow
         return json.dumps(ret_random_good_svg(images))

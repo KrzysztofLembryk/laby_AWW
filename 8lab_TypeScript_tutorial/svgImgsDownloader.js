@@ -14,34 +14,46 @@ class ImageLoader {
         this.container = document.getElementById("svgList");
     }
     createSpinners() {
-        var _a, _b;
+        var _a;
         for (let i = 0; i < ImageLoader.nbr_of_imgs; i++) {
             let svg_div = document.createElement("div");
             svg_div.className = "svg" + i;
+            // svg_div.style.border = "1px solid black";
+            // svg_div.style.width = "300px";
             let spinner = document.createElement("img");
             spinner.className = "spinner" + i;
             spinner.src = "spinner.gif";
             spinner.width = 150;
             spinner.height = 150;
+            let p = document.createElement("p");
+            p.innerText = "image " + i + ":";
+            svg_div.appendChild(p);
             svg_div.appendChild(spinner);
             spinner.onerror = () => {
             };
             (_a = this.container) === null || _a === void 0 ? void 0 : _a.appendChild(svg_div);
-            (_b = this.container) === null || _b === void 0 ? void 0 : _b.appendChild(document.createElement("br"));
+            // this.container?.appendChild(document.createElement("br"));
         }
     }
-    // private convertToSvg(svg: string): string{
-    // }
+    make_svg_from_json(svg_json) {
+        let svg = `<svg width="${svg_json.width}" height="${svg_json.height}" xmlns="http://www.w3.org/2000/svg" style="border:1px solid black">\n`;
+        for (let rect in svg_json.rects) {
+            let r = svg_json.rects[rect];
+            svg += `<rect x="${r.x1}" y="${r.y1}" width="${r.width}" height="${r.height}" fill="${r.fill}" stroke="${r.stroke}" stroke-width="${r.strokeWidth}"/>\n`;
+        }
+        console.log(svg);
+        return svg + "</svg>";
+    }
     downloadImage(i) {
         return __awaiter(this, void 0, void 0, function* () {
             var _a;
             let url = ImageLoader.serverUrl + "/randomImg";
             let response = yield fetch(url);
-            let svg = yield response.json();
+            let svg_json_str = yield response.json();
+            let svg_json = JSON.parse(svg_json_str);
             let my_div = (_a = this.container) === null || _a === void 0 ? void 0 : _a.getElementsByClassName("svg" + i);
             my_div[0].removeChild(my_div[0].getElementsByClassName("spinner" + i)[0]);
-            // let svg_div = document.getElementById("svg" + i);
-            // svg_div.innerHTML = svg;
+            my_div[0].innerHTML += this.make_svg_from_json(svg_json);
         });
     }
     loadImages() {
