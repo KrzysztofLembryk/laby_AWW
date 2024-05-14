@@ -8,27 +8,12 @@ interface Rect {
     fill: string;
     stroke: string;
     strokeWidth: number;
-    // constructor(x1: number, y1: number, width: number, height: number, fill: string, stroke: string, strokeWidth: number){
-    //     this.x1 = x1;
-    //     this.y1 = y1;
-    //     this.width = width;
-    //     this.height = height;
-    //     this.fill = fill;
-    //     this.stroke = stroke;
-    //     this.strokeWidth = strokeWidth;
-    // }
 }
 
 interface Dict  {
     width: number;
     height: number;
     rects: Rect[];
-
-    // constructor(width: number, height: number, rects: Rect[]){
-    //     this.width = width;
-    //     this.height = height;
-    //     this.rects = rects;
-    // }
 }
 
 class ImageLoader{
@@ -102,7 +87,7 @@ class ImageLoader{
         {
             let svg_json_str = await response.json();
             let svg_json: Dict = JSON.parse(svg_json_str);
-
+            // console.log(svg_json);
             my_div![0].innerHTML += this._make_svg_str_from_json(svg_json);
         }
         else 
@@ -112,8 +97,6 @@ class ImageLoader{
             button.onclick = () => this.downloadImage(i, true);
             button.className = "retry" + i;
             my_div![0].appendChild(button);
-            // my_div![0].innerHTML += "Error: " + response.status;
-        
         }
 
     }
@@ -132,6 +115,5 @@ class ImageLoader{
 function main(){
     let imgLoader = new ImageLoader();
     imgLoader.loadImages();
-    // document.body.appendChild(imgLoader.container);
 }
 main();

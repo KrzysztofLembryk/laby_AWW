@@ -61,6 +61,7 @@ class ImageLoader {
             if (response.ok) {
                 let svg_json_str = yield response.json();
                 let svg_json = JSON.parse(svg_json_str);
+                // console.log(svg_json);
                 my_div[0].innerHTML += this._make_svg_str_from_json(svg_json);
             }
             else {
@@ -69,7 +70,6 @@ class ImageLoader {
                 button.onclick = () => this.downloadImage(i, true);
                 button.className = "retry" + i;
                 my_div[0].appendChild(button);
-                // my_div![0].innerHTML += "Error: " + response.status;
             }
         });
     }
@@ -89,6 +89,5 @@ ImageLoader.serverUrl = serverUrl;
 function main() {
     let imgLoader = new ImageLoader();
     imgLoader.loadImages();
-    // document.body.appendChild(imgLoader.container);
 }
 main();

@@ -52,13 +52,13 @@ def too_big_svg():
         color = "#"+''.join([random.choice('0123456789ABCDEF') for j in range(6)])
         svg["rects"].append(
                             {
-                                "x": x1,
-                                "y": y1,
+                                "x1": x1,
+                                "y1": y1,
                                 "width": width,
                                 "height": height,
                                 "fill": color,
                                 "stroke": "",
-                                "stroke-width": 0
+                                "strokeWidth": 0
                             })
     return svg
 
@@ -82,6 +82,7 @@ async def random_img(db: Session = Depends(get_db)):
     random_number = random.randint(0, 4)
 
     if (random_number == 0):
+        # return json.dumps(ret_random_good_svg(images))
         return json.dumps(too_big_svg())
     elif (random_number == 1):
         return json.dumps(lengthy_generating_svg(images))
