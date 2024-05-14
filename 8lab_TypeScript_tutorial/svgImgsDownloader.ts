@@ -10,7 +10,7 @@ interface Rect {
     strokeWidth: number;
 }
 
-interface Dict  {
+interface InnerDict  {
     width: number;
     height: number;
     rects: Rect[];
@@ -54,8 +54,7 @@ class ImageLoader{
         }
     }
 
-
-    private _make_svg_str_from_json(svg_json: Dict): string{
+    private _make_svg_str_from_json(svg_json: InnerDict): string{
 
         let svg = `<svg width="${svg_json.width}" height="${svg_json.height}" xmlns="http://www.w3.org/2000/svg" style="border:1px solid black">\n`;
 
@@ -70,24 +69,29 @@ class ImageLoader{
 
     private async downloadImage(i: number, isRetry: boolean = false)
     {
+        // Sprawdzamy czy ustawiona jest atrybut retry, jesli tak to znaczy ze
+        // za pierwszym razem w glownej petli nie udalo sie pobrac obrazka,
+        // wiec usuwamy przycisk retry i dodajemy spinner
         if (isRetry)
         {
             let my_div = this.container?.getElementsByClassName("svg" + i);
             my_div![0].removeChild(my_div![0].getElementsByClassName("retry" + i)[0]);
             my_div![0].appendChild(this._createOneSpinner(i));
         }
+
         let url = ImageLoader.serverUrl + "/randomImg";
         let response = await fetch(url);
-
         let my_div = this.container?.getElementsByClassName("svg" + i);
         
         my_div![0].removeChild(my_div![0].getElementsByClassName("spinner" + i)[0]);
 
+        // Sprawdzamy czy serwer nie zwrocil bledu, jesli nie zwrocil to 
+        // pobieramy obrazek i dodajemy go do diva
+        // jesli zwrocil blad to dodajemy przycisk retry
         if (response.ok)
         {
             let svg_json_str = await response.json();
-            let svg_json: Dict = JSON.parse(svg_json_str);
-            // console.log(svg_json);
+            let svg_json: InnerDict = JSON.parse(svg_json_str);
             my_div![0].innerHTML += this._make_svg_str_from_json(svg_json);
         }
         else 

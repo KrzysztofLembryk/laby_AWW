@@ -49,6 +49,9 @@ class ImageLoader {
     downloadImage(i_1) {
         return __awaiter(this, arguments, void 0, function* (i, isRetry = false) {
             var _a, _b;
+            // Sprawdzamy czy ustawiona jest atrybut retry, jesli tak to znaczy ze
+            // za pierwszym razem w glownej petli nie udalo sie pobrac obrazka,
+            // wiec usuwamy przycisk retry i dodajemy spinner
             if (isRetry) {
                 let my_div = (_a = this.container) === null || _a === void 0 ? void 0 : _a.getElementsByClassName("svg" + i);
                 my_div[0].removeChild(my_div[0].getElementsByClassName("retry" + i)[0]);
@@ -58,10 +61,12 @@ class ImageLoader {
             let response = yield fetch(url);
             let my_div = (_b = this.container) === null || _b === void 0 ? void 0 : _b.getElementsByClassName("svg" + i);
             my_div[0].removeChild(my_div[0].getElementsByClassName("spinner" + i)[0]);
+            // Sprawdzamy czy serwer nie zwrocil bledu, jesli nie zwrocil to 
+            // pobieramy obrazek i dodajemy go do diva
+            // jesli zwrocil blad to dodajemy przycisk retry
             if (response.ok) {
                 let svg_json_str = yield response.json();
                 let svg_json = JSON.parse(svg_json_str);
-                // console.log(svg_json);
                 my_div[0].innerHTML += this._make_svg_str_from_json(svg_json);
             }
             else {

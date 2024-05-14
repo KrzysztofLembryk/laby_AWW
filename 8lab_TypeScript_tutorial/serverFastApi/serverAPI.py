@@ -1,4 +1,5 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, WebSocket, WebSocketDisconnect
+from fastapi.responses import HTMLResponse
 from pydantic import BaseModel
 from fastapi import FastAPI, Form, Depends, Request
 from .database import Base, engine, SessionLocal
@@ -9,7 +10,7 @@ from . import models
 import random
 from datetime import datetime
 import time
-from fastapi import HTTPException
+from fastapi import HTTPException 
 
 app = FastAPI()
 Base.metadata.create_all(bind=engine)
@@ -74,15 +75,12 @@ def lengthy_generating_svg(images):
 def ret_500_error():
     raise HTTPException(status_code=500, detail="Internal Server Error - happened when generating random svg image.")
 
-
-
 @app.get("/randomImg")
 async def random_img(db: Session = Depends(get_db)):
     images = db.query(models.SvgImage).all()
     random_number = random.randint(0, 4)
 
     if (random_number == 0):
-        # return json.dumps(ret_random_good_svg(images))
         return json.dumps(too_big_svg())
     elif (random_number == 1):
         return json.dumps(lengthy_generating_svg(images))
@@ -91,3 +89,16 @@ async def random_img(db: Session = Depends(get_db)):
     else:
         # Rozpatrzyc przypadek gdy zero svg obrazkow
         return json.dumps(ret_random_good_svg(images))
+
+
+def get_recent_elements(db: Session = Depends(get_db)):
+    recent_elements = db.query(models.SvgImage).order_by(models.SvgImage.id.desc()).limit(5).all()
+    return {image.name:{"width": image.width, "height": image.height, "rects": json.loads(image.svg)}  for image in recent_elements}
+
+@app.websocket_route("/ws")
+async def websocket_endpoint(websocket: WebSocket):
+    await websocket.accept()
+    while True:
+        data = await websocket.receive_text()
+        most_recent_elements = get_recent_elements()
+        await websocket.send_json(most_recent_elements)
