@@ -40,6 +40,15 @@ class ImageLoader{
         this.container = document.getElementById("svgList");
     }
 
+    private _createOneSpinner(i: number)
+    {
+        let spinner = document.createElement("img");
+        spinner.className = "spinner" + i;
+        spinner.src = "spinner.gif";
+        spinner.width = 150;
+        spinner.height = 150;
+        return spinner;
+    }
 
     private createSpinners()
     {
@@ -48,27 +57,20 @@ class ImageLoader{
             svg_div.className = "svg" + i;
             // svg_div.style.border = "1px solid black";
             // svg_div.style.width = "300px";
-            let spinner = document.createElement("img");
-            spinner.className = "spinner" + i;
-            spinner.src = "spinner.gif";
-            spinner.width = 150;
-            spinner.height = 150;
-
+            let spinner = this._createOneSpinner(i)
             let p = document.createElement("p");
             p.innerText = "image " + i + ":";
 
             svg_div.appendChild(p);
             svg_div.appendChild(spinner);
-            spinner.onerror = () => {
                 
-            }
             this.container?.appendChild(svg_div);
             // this.container?.appendChild(document.createElement("br"));
         }
     }
 
 
-    private make_svg_from_json(svg_json: Dict): string{
+    private _make_svg_str_from_json(svg_json: Dict): string{
 
         let svg = `<svg width="${svg_json.width}" height="${svg_json.height}" xmlns="http://www.w3.org/2000/svg" style="border:1px solid black">\n`;
 
@@ -81,21 +83,42 @@ class ImageLoader{
         return svg + "</svg>";
     }
 
-    private async downloadImage(i: number)
+    private async downloadImage(i: number, isRetry: boolean = false)
     {
+        if (isRetry)
+        {
+            let my_div = this.container?.getElementsByClassName("svg" + i);
+            my_div![0].removeChild(my_div![0].getElementsByClassName("retry" + i)[0]);
+            my_div![0].appendChild(this._createOneSpinner(i));
+        }
         let url = ImageLoader.serverUrl + "/randomImg";
         let response = await fetch(url);
-        let svg_json_str = await response.json();
-        let svg_json: Dict = JSON.parse(svg_json_str);
 
         let my_div = this.container?.getElementsByClassName("svg" + i);
         
         my_div![0].removeChild(my_div![0].getElementsByClassName("spinner" + i)[0]);
 
-        my_div![0].innerHTML += this.make_svg_from_json(svg_json);
+        if (response.ok)
+        {
+            let svg_json_str = await response.json();
+            let svg_json: Dict = JSON.parse(svg_json_str);
+
+            my_div![0].innerHTML += this._make_svg_str_from_json(svg_json);
+        }
+        else 
+        {
+            let button = document.createElement("button");
+            button.innerText = "Retry";
+            button.onclick = () => this.downloadImage(i, true);
+            button.className = "retry" + i;
+            my_div![0].appendChild(button);
+            // my_div![0].innerHTML += "Error: " + response.status;
+        
+        }
+
     }
 
-    loadImages(){
+    async loadImages(){
         // najpierw tworzymy wszystkie divy, dajemy do nich spinnery a
         // dopiero potem ściaągamy obrazki z servera
         this.createSpinners();

@@ -86,8 +86,7 @@ async def random_img(db: Session = Depends(get_db)):
     elif (random_number == 1):
         return json.dumps(lengthy_generating_svg(images))
     elif (random_number == 2):
-        return json.dumps(too_big_svg())
-        # return ret_500_error()
+        return ret_500_error()
     else:
         # Rozpatrzyc przypadek gdy zero svg obrazkow
         return json.dumps(ret_random_good_svg(images))
