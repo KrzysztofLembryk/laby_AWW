@@ -63,12 +63,13 @@ class ImageLoader{
             let r = svg_json.rects[rect];
             svg += `<rect x="${r.x1}" y="${r.y1}" width="${r.width}" height="${r.height}" fill="${r.fill}" stroke="${r.stroke}" stroke-width="${r.strokeWidth}"/>\n`;
         }
-        console.log(svg);
+        // console.log(svg);
         return svg + "</svg>";
     }
 
     private async downloadImage(i: number, isRetry: boolean = false)
     {
+        console.log("downloading image " + i);
         // Sprawdzamy czy ustawiona jest atrybut retry, jesli tak to znaczy ze
         // za pierwszym razem w glownej petli nie udalo sie pobrac obrazka,
         // wiec usuwamy przycisk retry i dodajemy spinner

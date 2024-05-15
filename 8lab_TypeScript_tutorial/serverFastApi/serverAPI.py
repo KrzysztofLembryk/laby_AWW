@@ -11,6 +11,7 @@ import random
 from datetime import datetime
 import time
 from fastapi import HTTPException 
+import asyncio
 
 app = FastAPI()
 Base.metadata.create_all(bind=engine)
@@ -68,8 +69,8 @@ def ret_random_good_svg(images):
     image = images[random_number]
     return {"width": image.width, "height": image.height, "rects": json.loads(image.svg)}
 
-def lengthy_generating_svg(images):
-    time.sleep(5)
+async def lengthy_generating_svg(images):
+    await asyncio.sleep(5)
     return ret_random_good_svg(images)
 
 def ret_500_error():
@@ -83,7 +84,7 @@ async def random_img(db: Session = Depends(get_db)):
     if (random_number == 0):
         return json.dumps(too_big_svg())
     elif (random_number == 1):
-        return json.dumps(lengthy_generating_svg(images))
+        return json.dumps(await lengthy_generating_svg(images))
     elif (random_number == 2):
         return ret_500_error()
     else:
