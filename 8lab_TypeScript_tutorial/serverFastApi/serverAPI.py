@@ -1,15 +1,14 @@
 from fastapi import FastAPI, WebSocket, WebSocketDisconnect
 from fastapi.responses import HTMLResponse
 from pydantic import BaseModel
-from fastapi import FastAPI, Form, Depends, Request
+from fastapi import FastAPI, Depends 
 from .database import Base, engine, SessionLocal
-from sqlalchemy.orm import Session, sessionmaker, joinedload
+from sqlalchemy.orm import Session 
 from typing import List, Dict
 import json
 from . import models
 import random
 from datetime import datetime
-import time
 from fastapi import HTTPException 
 import asyncio
 
@@ -23,14 +22,6 @@ def get_db():
     finally:
         db.close()
 
-@app.post("/save")
-async def save(data_json: Dict, db: Session = Depends(get_db)):
-    svg_name = ""
-    
-    svg_image = models.SvgImage(name=data_json["name"], width=data_json["width"], height=data_json["height"], svg=json.dumps(data_json["rects"]))
-    db.add(svg_image)
-    db.commit()
-    return {"message": "added svg image of name: " + svg_name}
 
 @app.get("/imgLst")
 async def img_lst(db: Session = Depends(get_db)):
@@ -92,14 +83,53 @@ async def random_img(db: Session = Depends(get_db)):
         return json.dumps(ret_random_good_svg(images))
 
 
-def get_recent_elements(db: Session = Depends(get_db)):
-    recent_elements = db.query(models.SvgImage).order_by(models.SvgImage.id.desc()).limit(5).all()
-    return {image.name:{"width": image.width, "height": image.height, "rects": json.loads(image.svg)}  for image in recent_elements}
+class ConnectionManager:
+    def __init__(self):
+        self.active_connections: list[WebSocket] = []
 
-@app.websocket_route("/ws")
-async def websocket_endpoint(websocket: WebSocket):
-    await websocket.accept()
-    while True:
-        data = await websocket.receive_text()
-        most_recent_elements = get_recent_elements()
-        await websocket.send_json(most_recent_elements)
+    async def connect(self, websocket: WebSocket):
+        await websocket.accept()
+        self.active_connections.append(websocket)
+
+    def disconnect(self, websocket: WebSocket):
+        self.active_connections.remove(websocket)
+
+    async def send_personal_message(self, message: str, websocket: WebSocket):
+        await websocket.send_text(message)
+
+    async def broadcast(self, message: str):
+        for connection in self.active_connections:
+            await connection.send_text(message)
+
+manager = ConnectionManager()
+
+def get_recent_elements(db: Session):
+    recent_elements = db.query(models.SvgImage).order_by(models.SvgImage.id.desc()).limit(5).all()
+    return [{"width": image.width, "height": image.height, "rects": json.loads(image.svg)}  for image in recent_elements]
+
+@app.websocket("/ws/{client_id}")
+async def websocket_endpoint(websocket: WebSocket, db: Session = Depends(get_db)):
+    await manager.connect(websocket)
+    try:
+        while True:
+            data = await websocket.receive_text()
+            svg_imgs = get_recent_elements(db)
+            await manager.send_personal_message(json.dumps(svg_imgs), websocket)
+            # await manager.broadcast(f"Client #{client_id} says: {data}")
+    except WebSocketDisconnect:
+        manager.disconnect(websocket)
+        # await manager.broadcast(f"Client #{client_id} left the chat")
+
+
+@app.post("/save")
+async def save(data_json: Dict, db: Session = Depends(get_db)):
+    svg_name = ""
+    
+    svg_image = models.SvgImage(name=data_json["name"], width=data_json["width"], height=data_json["height"], svg=json.dumps(data_json["rects"]))
+
+    db.add(svg_image)
+    db.commit()
+    svg_imgs = get_recent_elements(db)
+    manager.broadcast(json.dumps(svg_imgs))
+
+    return {"message": "added svg image of name: " + svg_name}

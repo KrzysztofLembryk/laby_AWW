@@ -14,14 +14,14 @@ interface InnerDict  {
     rects: Rect[];
 }
 
-interface OuterDict {
-    name: string;
-    svg: InnerDict;
-}
+// interface OuterDict {
+//     name: string;
+//     svg: InnerDict;
+// }
 
-interface Dicts {
-    svgs: OuterDict[];
-}
+// interface Dicts {
+//     svgs: OuterDict[];
+// }
 
 
 function _make_svg_str_from_json(svg_json: InnerDict): string{
@@ -37,23 +37,24 @@ function _make_svg_str_from_json(svg_json: InnerDict): string{
         return svg + "</svg>";
     }
 
-let ws = new WebSocket("http://127.0.0.1:8000/ws");
+let client_id = Date.now()
+document.querySelector("#ws-id")!.textContent = "" + client_id;
+let ws = new WebSocket(`ws://127.0.0.1:8000/ws/${client_id}`);
 
 function sendMessage(event: Event) {
     ws.send("Refresh");
-    event.preventDefault()
+    // event.preventDefault();
 }
 
 ws.onmessage = function(event) 
 {
     let svgLst = document.getElementById('recentAddedLst');
-    let svg_lst: Dicts = JSON.parse(event.data);
-    for (let outer in svg_lst.svgs)
+    let svg_dict_lst: InnerDict[] = JSON.parse(event.data);
+    for (let svg in svg_dict_lst)
     {
-        let lstElem = document.createElement('li');
-        let svg_str = _make_svg_str_from_json(svg_lst.svgs[outer].svg);
-        let content = document.createTextNode(svg_str);
-        lstElem.appendChild(content);
-        svgLst!.appendChild(lstElem);
+        let div = document.createElement('div');
+        let svg_str = _make_svg_str_from_json(svg_dict_lst[svg]);
+        div.innerHTML = svg_str;
+        svgLst!.appendChild(div);
     }
 };
