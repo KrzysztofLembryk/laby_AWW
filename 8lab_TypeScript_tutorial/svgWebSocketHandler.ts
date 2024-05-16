@@ -33,7 +33,7 @@ function _make_svg_str_from_json(svg_json: InnerDict): string{
             let r = svg_json.rects[rect];
             svg += `<rect x="${r.x1}" y="${r.y1}" width="${r.width}" height="${r.height}" fill="${r.fill}" stroke="${r.stroke}" stroke-width="${r.strokeWidth}"/>\n`;
         }
-        console.log(svg);
+        console.log(svg + "</svg>");
         return svg + "</svg>";
     }
 
@@ -43,12 +43,13 @@ let ws = new WebSocket(`ws://127.0.0.1:8000/ws/${client_id}`);
 
 function sendMessage(event: Event) {
     ws.send("Refresh");
-    // event.preventDefault();
+    event.preventDefault();
 }
 
 ws.onmessage = function(event) 
 {
     let svgLst = document.getElementById('recentAddedLst');
+    svgLst!.innerHTML = "";
     let svg_dict_lst: InnerDict[] = JSON.parse(event.data);
     for (let svg in svg_dict_lst)
     {
@@ -57,4 +58,5 @@ ws.onmessage = function(event)
         div.innerHTML = svg_str;
         svgLst!.appendChild(div);
     }
+    event.preventDefault();
 };

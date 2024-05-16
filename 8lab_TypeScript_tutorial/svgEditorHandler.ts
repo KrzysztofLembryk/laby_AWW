@@ -298,8 +298,11 @@ function generateRandomFilename(): string {
     return filename;
 }
 
-function saveSVG(): void
-{
+let save_id = 1;
+let ws_save = new WebSocket(`ws://127.0.0.1:8000/save`);
+
+function saveSVG(): boolean{
+    // event.preventDefault();
     let svg_name = generateRandomFilename();
     let lst: any[] = [];
 
@@ -310,12 +313,12 @@ function saveSVG(): void
 
     let final_json = {"name": svg_name, "width": svgImages[0].width, "height": svgImages[0].height, "rects": lst};
 
-    const response = fetch('http://127.0.0.1:8000/save', {
-        method: 'POST',
-        headers: {
-            'Accept': 'application/json',
-            'Content-Type': 'application/json'
-        }, body: JSON.stringify(final_json)});
-
-    return;
+    // const response = fetch('http://127.0.0.1:8000/save', {
+    //     method: 'POST',
+    //     headers: {
+    //         'Accept': 'application/json',
+    //         'Content-Type': 'application/json'
+    //     }, body: JSON.stringify(final_json)});
+    ws_save.send(JSON.stringify(final_json));
+    return false;
 }

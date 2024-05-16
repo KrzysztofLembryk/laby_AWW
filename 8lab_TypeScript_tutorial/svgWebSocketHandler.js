@@ -12,7 +12,7 @@ function _make_svg_str_from_json(svg_json) {
         let r = svg_json.rects[rect];
         svg += `<rect x="${r.x1}" y="${r.y1}" width="${r.width}" height="${r.height}" fill="${r.fill}" stroke="${r.stroke}" stroke-width="${r.strokeWidth}"/>\n`;
     }
-    console.log(svg);
+    console.log(svg + "</svg>");
     return svg + "</svg>";
 }
 let client_id = Date.now();
@@ -20,22 +20,17 @@ document.querySelector("#ws-id").textContent = "" + client_id;
 let ws = new WebSocket(`ws://127.0.0.1:8000/ws/${client_id}`);
 function sendMessage(event) {
     ws.send("Refresh");
-    // event.preventDefault();
+    event.preventDefault();
 }
 ws.onmessage = function (event) {
-    console.log(event.data);
     let svgLst = document.getElementById('recentAddedLst');
+    svgLst.innerHTML = "";
     let svg_dict_lst = JSON.parse(event.data);
-    // console.log(svg_lst);
     for (let svg in svg_dict_lst) {
-        console.log(svg);
-        console.log("xdxd");
-        // let lstElem = document.createElement('li');
         let div = document.createElement('div');
         let svg_str = _make_svg_str_from_json(svg_dict_lst[svg]);
         div.innerHTML = svg_str;
-        // let content = document.createTextNode(svg_str);
-        // lstElem.appendChild(div);
         svgLst.appendChild(div);
     }
+    event.preventDefault();
 };

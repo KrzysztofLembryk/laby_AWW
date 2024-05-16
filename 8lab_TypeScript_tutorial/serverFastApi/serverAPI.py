@@ -108,28 +108,40 @@ def get_recent_elements(db: Session):
     return [{"width": image.width, "height": image.height, "rects": json.loads(image.svg)}  for image in recent_elements]
 
 @app.websocket("/ws/{client_id}")
-async def websocket_endpoint(websocket: WebSocket, db: Session = Depends(get_db)):
+async def websocket_endpoint(websocket: WebSocket, client_id: int, db: Session = Depends(get_db)):
     await manager.connect(websocket)
     try:
         while True:
-            data = await websocket.receive_text()
-            svg_imgs = get_recent_elements(db)
-            await manager.send_personal_message(json.dumps(svg_imgs), websocket)
-            # await manager.broadcast(f"Client #{client_id} says: {data}")
+            if client_id == 1:
+                svg_imgs = get_recent_elements(db)
+                await manager.broadcast(json.dumps(svg_imgs))
+            else:
+                data = await websocket.receive_text()
+                svg_imgs = get_recent_elements(db)
+                await manager.send_personal_message(json.dumps(svg_imgs), websocket)
+            # await manager.broadcast(json.dumps(svg_imgs))
     except WebSocketDisconnect:
         manager.disconnect(websocket)
         # await manager.broadcast(f"Client #{client_id} left the chat")
 
 
-@app.post("/save")
-async def save(data_json: Dict, db: Session = Depends(get_db)):
-    svg_name = ""
-    
-    svg_image = models.SvgImage(name=data_json["name"], width=data_json["width"], height=data_json["height"], svg=json.dumps(data_json["rects"]))
+@app.websocket("/save")
+async def save(websocket: WebSocket, db: Session = Depends(get_db)):
 
-    db.add(svg_image)
-    db.commit()
-    svg_imgs = get_recent_elements(db)
-    manager.broadcast(json.dumps(svg_imgs))
+    await manager.connect(websocket)
+    try:
+        while True:
+            data_json = await websocket.receive_text()
+            data_json = json.loads(data_json)
 
-    return {"message": "added svg image of name: " + svg_name}
+            svg_image = models.SvgImage(name=data_json["name"], width=data_json["width"], height=data_json["height"], svg=json.dumps(data_json["rects"]))
+            db.add(svg_image)
+            db.commit()
+
+            svg_imgs = get_recent_elements(db)
+            await manager.broadcast(json.dumps(svg_imgs))
+
+    except WebSocketDisconnect:
+        manager.disconnect(websocket)
+
+

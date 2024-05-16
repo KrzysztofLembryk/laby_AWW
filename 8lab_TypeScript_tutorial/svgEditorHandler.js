@@ -236,19 +236,22 @@ function generateRandomFilename() {
     }
     return filename;
 }
+let save_id = 1;
+let ws_save = new WebSocket(`ws://127.0.0.1:8000/save`);
 function saveSVG() {
+    // event.preventDefault();
     let svg_name = generateRandomFilename();
     let lst = [];
     for (let i = 0; i < svgImages[0].rects.length; i++) {
         lst.push({ "x1": svgImages[0].rects[i].x1, "y1": svgImages[0].rects[i].y1, "width": svgImages[0].rects[i].width, "height": svgImages[0].rects[i].height, "fill": svgImages[0].rects[i].fill, "stroke": svgImages[0].rects[i].stroke, "strokeWidth": svgImages[0].rects[i].strokeWidth });
     }
     let final_json = { "name": svg_name, "width": svgImages[0].width, "height": svgImages[0].height, "rects": lst };
-    const response = fetch('http://127.0.0.1:8000/save', {
-        method: 'POST',
-        headers: {
-            'Accept': 'application/json',
-            'Content-Type': 'application/json'
-        }, body: JSON.stringify(final_json)
-    });
-    return;
+    // const response = fetch('http://127.0.0.1:8000/save', {
+    //     method: 'POST',
+    //     headers: {
+    //         'Accept': 'application/json',
+    //         'Content-Type': 'application/json'
+    //     }, body: JSON.stringify(final_json)});
+    ws_save.send(JSON.stringify(final_json));
+    return false;
 }
