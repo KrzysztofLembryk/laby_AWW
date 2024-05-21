@@ -92,8 +92,19 @@ class ImageLoader{
         if (response.ok)
         {
             let svg_json_str = await response.json();
-            let svg_json: InnerDict = JSON.parse(svg_json_str);
-            my_div![0].innerHTML += this._make_svg_str_from_json(svg_json);
+            if (svg_json_str.length >= 25500)
+            {
+                let button = document.createElement("button");
+                button.innerText = "Retry - too big img";
+                button.onclick = () => this.downloadImage(i, true);
+                button.className = "retry" + i;
+                my_div![0].appendChild(button);
+            }
+            else
+            {
+                let svg_json: InnerDict = JSON.parse(svg_json_str);
+                my_div![0].innerHTML += this._make_svg_str_from_json(svg_json);
+            }
         }
         else 
         {

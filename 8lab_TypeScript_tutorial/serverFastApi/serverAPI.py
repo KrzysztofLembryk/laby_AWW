@@ -35,7 +35,7 @@ def too_big_svg():
     svg["rects"] = []
     random.seed(datetime.now().timestamp())
 
-    for i in range(1, random.randint(10,120)):
+    for i in range(1, random.randint(90,2200)):
         x1 = random.randint(0, 298)
         y1 = random.randint(0, 298)
         x2 = random.randint(x1 + 1, 300)
