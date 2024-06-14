@@ -96,6 +96,7 @@ class Rectangle {
         this.strokeWidth = strokeWidth;
     }
 
+    // do id lepsze jest pole data- 
     toString(): string {
         if (this.clickedHandler.isClicked)
             return `<rect x="${this.x1}" y="${this.y1}" width="${this.width}" height="${this.height}" fill="${this.fill}" stroke="${this.clickedHandler.getStroke()}" stroke-width="${this.clickedHandler.getStrokeWidth()}" onclick="setRectRemoveID(${this.id})" />`;
