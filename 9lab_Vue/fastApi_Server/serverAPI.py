@@ -1,4 +1,4 @@
-from fastapi import FastAPI, HTTPException 
+from fastapi import FastAPI, HTTPException, WebSocket, WebSocketDisconnect
 from typing import List, Dict
 import json
 import random
@@ -48,7 +48,7 @@ def too_big_svg():
 async def id_img(id: int):
     if id >= len(constants.arr_of_imgs) or id < 0:
         raise HTTPException(status_code=404)
-    i = random.randint(1, 11)
+    i = random.randint(0, 11)
     if i <= 4:
         return constants.arr_of_imgs[id]
     elif i <= 7:
@@ -64,16 +64,54 @@ async def img_lst():
     nbr_of_imgs = len(constants.arr_of_imgs)
 
     random.seed(datetime.now().timestamp())
+    n = len(constants.arr_of_imgs)
     i = 0
     set_of_ids = set()
-    while i < 5:
-        num = random.randint(0, nbr_of_imgs - 1)
-        if num not in set_of_ids:
-            images.append({"id": num, "svg": constants.arr_of_imgs[num]})
-            set_of_ids.add(num)
-            i += 1
-    # random.seed(datetime.now().timestamp())
-    # for i in range(1, random.randint(2, 20)):
-    #     svg = too_big_svg()
-    #     images.append(svg)
+    while i < n:
+        images.append({"id": i, "svg": constants.arr_of_imgs[i]})
+        i += 1
+        # num = random.randint(0, nbr_of_imgs - 1)
+        # if num not in set_of_ids:
+        #     images.append({"id": num, "svg": constants.arr_of_imgs[num]})
+        #     set_of_ids.add(num)
+        #     i += 1
     return images
+
+# websocket
+class ConnectionManager:
+    def __init__(self):
+        self.active_connections: list[WebSocket] = []
+
+    async def connect(self, websocket: WebSocket):
+        await websocket.accept()
+        self.active_connections.append(websocket)
+
+    def disconnect(self, websocket: WebSocket):
+        self.active_connections.remove(websocket)
+
+    async def send_personal_message(self, message: str, websocket: WebSocket):
+        await websocket.send_text(message)
+
+    async def broadcast(self, message: str):
+        for connection in self.active_connections:
+            await connection.send_text(message)
+
+manager = ConnectionManager()
+
+@app.websocket("/ws")
+async def websocket_endpoint(websocket: WebSocket):
+    await manager.connect(websocket)
+    try:
+        while True:
+            await websocket.receive_text()
+    except WebSocketDisconnect:
+        manager.disconnect(websocket)
+
+@app.get("/addImg")
+async def add_img():
+    img = too_big_svg()
+    constants.arr_of_imgs.append(img)
+
+    await manager.broadcast(str(len(constants.arr_of_imgs)))
+
+    return "Image added successfully"

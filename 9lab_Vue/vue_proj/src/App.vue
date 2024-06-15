@@ -4,12 +4,26 @@
       <h1>List of imgs</h1>
       <v-pagination v-model="currentPage" :length="totalPages"></v-pagination>
 
+        <v-chip class="green">
+            Init nbr of images: {{ init_nbr_of_imgs}}
+        </v-chip>
+        <br>
+        <v-chip v-if="init_nbr_of_imgs != new_nbr_of_imgs" class="red" @click="get_imgs">
+            ({{ new_nbr_of_imgs - init_nbr_of_imgs }} new images)
+            CLICK TO REFRESH
+        </v-chip>
+
       <div>
         <p>All tags:</p>
         <v-chip v-for="(tag, index) in allTags" :key="index" @click="selectedTag = tag">
           {{ tag }}
         </v-chip>
       </div>
+
+      <div style="margin-top: 5px;">
+        <p>Selected tag: {{ selectedTag }}</p>
+      </div>
+
       <div class="bottom-border"></div>
       
       <v-list>
@@ -68,6 +82,9 @@ export default {
       selectedImageID: null,
       selectedImage: null,
       dialog : false,
+      init_nbr_of_imgs: 0,
+      new_nbr_of_imgs: 0,
+      socket: null,
     };
   },
 
@@ -118,6 +135,12 @@ export default {
 
   created() {
     this.get_imgs();
+
+    this.socket = new WebSocket('ws://localhost:8000/ws');
+
+    this.socket.onmessage = (event) => {
+      this.new_nbr_of_imgs = parseInt(event.data, 10);
+    }
   },
 
   methods: {
@@ -163,9 +186,12 @@ export default {
 
 
       this.images = data;
+      this.ids_images_and_tags = [];
       for (let i = 0; i < this.images.length; i++) {
         this.ids_images_and_tags.push({ id: this.images[i].id, img: this.images[i].svg, tags: this.get_tags() });
       }
+      this.init_nbr_of_imgs = this.ids_images_and_tags.length;
+      this.new_nbr_of_imgs = this.ids_images_and_tags.length;
     },
   },
 };
