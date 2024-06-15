@@ -3,7 +3,7 @@
     <v-card>
       <h1>List of imgs</h1>
       <v-pagination v-model="currentPage" :length="totalPages"></v-pagination>
-      
+
       <div>
         <p>All tags:</p>
         <v-chip v-for="(tag, index) in allTags" :key="index" @click="selectedTag = tag">
@@ -12,18 +12,18 @@
       </div>
       <div class="bottom-border"></div>
       
-
       <v-list>
 
-        <v-list-item-group v-for="(image_and_tags, index) in sortedImages" :key="index">
+        <v-list-item-group v-for="(id_image_and_tags, index) in sortedImages" :key="index">
 
           <v-list-item>
-            <v-list-item-content v-html="image_and_tags.img">
-            </v-list-item-content>
+            <v-list-item-content v-html="id_image_and_tags.img"
+             @click="selectedImageID = id_image_and_tags.id; dialog = true; send_request_for_img(selectedImageID)"> 
+             </v-list-item-content>
           </v-list-item>
 
           <v-list-item>
-            <v-chip v-for="(tag, tagIndex) in image_and_tags.tags" :key="tagIndex">
+            <v-chip v-for="(tag, tagIndex) in id_image_and_tags.tags" :key="tagIndex">
               {{ tag }}
             </v-chip>
           </v-list-item>
@@ -31,6 +31,24 @@
         </v-list-item-group>
 
       </v-list>
+
+      <v-dialog v-model="dialog" max-width="290" @open="dialog = false" @close="selectedImage = null">
+        <v-card>
+          <v-card-title class="headline">Selected Image</v-card-title>
+          <v-card-text>
+            <div v-if="selectedImage == null" >
+              <img src="./spinner.gif" alt="Loading..." />
+            </div>
+            <div v-else-if="selectedImage == '0'">
+              <p>ERROR</p>
+            </div>
+            <div v-else v-html="selectedImage"></div>
+
+          </v-card-text>
+        </v-card>
+      </v-dialog>
+
+
     </v-card>
   </v-app>
 </template>
@@ -44,9 +62,12 @@ export default {
       images: [],
       currentPage: 1,
       itemsPerPage: 3,
-      images_and_tags: [],
+      ids_images_and_tags: [],
       selectedTag: null,
       page_count: 0,
+      selectedImageID: null,
+      selectedImage: null,
+      dialog : false,
     };
   },
 
@@ -54,7 +75,7 @@ export default {
     sortedImages() {
       let images;
       if (!this.selectedTag || this.selectedTag == "All") {
-        images =  this.images_and_tags;
+        images =  this.ids_images_and_tags;
         // let start = (this.currentPage - 1) * this.itemsPerPage;
         // let end = start + this.itemsPerPage;
         // this.totalPages(Math.ceil(images.length / this.itemsPerPage))
@@ -62,7 +83,7 @@ export default {
       }
       else 
       {
-        images = this.images_and_tags.filter(image_and_tags => image_and_tags.tags.includes(this.selectedTag));
+        images = this.ids_images_and_tags.filter(id_image_and_tags => id_image_and_tags.tags.includes(this.selectedTag));
 
       }
         let start = (this.currentPage - 1) * this.itemsPerPage;
@@ -74,11 +95,11 @@ export default {
     allTags() {
       let tagsMap = new Map();
       tagsMap.set("All", 1);
-      for (let i = 0; i < this.images_and_tags.length; i++) 
+      for (let i = 0; i < this.ids_images_and_tags.length; i++) 
       {
-        for (let j = 0; j < this.images_and_tags[i].tags.length; j++) 
+        for (let j = 0; j < this.ids_images_and_tags[i].tags.length; j++) 
         {
-          tagsMap.set(this.images_and_tags[i].tags[j], 1);
+          tagsMap.set(this.ids_images_and_tags[i].tags[j], 1);
         }
       }
 
@@ -87,7 +108,7 @@ export default {
     paginatedImages() {
       const start = (this.currentPage - 1) * this.itemsPerPage;
       const end = start + this.itemsPerPage;
-      return this.images_and_tags.slice(start, end);
+      return this.ids_images_and_tags.slice(start, end);
     },
 
     totalPages() {
@@ -100,6 +121,21 @@ export default {
   },
 
   methods: {
+
+    async send_request_for_img(id)
+    {
+      this.selectedImage = null;
+      const response = await fetch('http://localhost:8000/img/' + id);
+      const data = await response.json();
+      if (!response.ok) 
+      {
+        this.selectedImage = '0';
+      }
+      else 
+      {
+        this.selectedImage = data;
+      }
+    },
 
     set_page_count(nbr)
     {
@@ -128,7 +164,7 @@ export default {
 
       this.images = data;
       for (let i = 0; i < this.images.length; i++) {
-        this.images_and_tags.push({ img: this.images[i], tags: this.get_tags() });
+        this.ids_images_and_tags.push({ id: this.images[i].id, img: this.images[i].svg, tags: this.get_tags() });
       }
     },
   },
