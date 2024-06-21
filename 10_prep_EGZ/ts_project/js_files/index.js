@@ -140,6 +140,7 @@ function handle_form(event) {
     img.add_random_rect();
     lst_of_imgs.push(img);
     show_imgs();
+    form.reset();
 }
 function clear_imgs() {
     lst_of_imgs = [];

@@ -122,11 +122,6 @@ export default {
 
       return Array.from(tagsMap.keys());
     },
-    paginatedImages() {
-      const start = (this.currentPage - 1) * this.itemsPerPage;
-      const end = start + this.itemsPerPage;
-      return this.ids_images_and_tags.slice(start, end);
-    },
 
     totalPages() {
       return this.page_count;

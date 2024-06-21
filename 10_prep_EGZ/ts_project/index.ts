@@ -205,6 +205,7 @@ function handle_form(event: Event)
     img.add_random_rect();
     lst_of_imgs.push(img);
     show_imgs();
+    form.reset();
 }
 
 function clear_imgs()
