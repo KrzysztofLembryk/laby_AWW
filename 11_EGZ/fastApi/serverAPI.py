@@ -86,11 +86,6 @@ async def img_lst():
     while i < n:
         images.append({"id": i, "svg": constants.arr_of_imgs[i]})
         i += 1
-        # num = random.randint(0, nbr_of_imgs - 1)
-        # if num not in set_of_ids:
-        #     images.append({"id": num, "svg": constants.arr_of_imgs[num]})
-        #     set_of_ids.add(num)
-        #     i += 1
     return images
 
 # websocket
