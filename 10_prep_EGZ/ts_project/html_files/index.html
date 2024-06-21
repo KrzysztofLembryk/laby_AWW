@@ -1,9 +1,50 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <title>TS prep EGZ</title>
-    </head>
-    <body>
-        <script src="../js_files/index.js"></script>
-    </body>
+
+<head>
+    <title>TS prep EGZ</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+
+<body>
+    <div class="container">
+        <div class="row justify-content">
+            <div class="col-md-2">
+                <form id="svg_form">
+                    <div class="form-group">
+                        <label for="x">X:</label>
+                        <input type="number" id="x" name="x" class="form-control" min="0" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="y">Y:</label>
+                        <input type="number" id="y" name="y" class="form-control" min="0" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="width">Width:</label>
+                        <input type="number" id="width" name="width" class="form-control" min="1" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="height">Height:</label>
+                        <input type="number" id="height" name="height" class="form-control" min="1" required>
+                    </div>
+
+                    <div class="form-group row">
+                        <label for="color">Color:</label>
+                        <div class="col-sm-6">
+                            <input type="color" id="color" name="color" class="form-control" required>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn btn-success">Submit</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="../js_files/index.js"></script>
+</body>
+
 </html>
