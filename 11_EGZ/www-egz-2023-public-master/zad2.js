@@ -123,6 +123,9 @@ function connectToSocket() {
             price_div.innerText = "Connection closed by server";
             handle_button_making("Reconnect?");
         }
+        else {
+            i_closed_ws = false;
+        }
     };
 }
 connectToSocket();
