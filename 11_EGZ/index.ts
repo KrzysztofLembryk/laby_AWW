@@ -34,16 +34,16 @@ let btn = document.getElementById("fetch_btn")!;
 btn.addEventListener("click", fetching_from_fastapi);
 
 
-let ws = new WebSocket(`ws://127.0.0.1:8000/ws`);
+// let ws = new WebSocket(`ws://127.0.0.1:8000/ws`);
 
-function sendMessage(event: Event) {
-    ws.send("Refresh");
-    event.preventDefault();
-}
+// function sendMessage(event: Event) {
+//     ws.send("Refresh");
+//     event.preventDefault();
+// }
 
-ws.onmessage = function(event) 
-{
-    let svgLst = document.getElementById('recentAddedLst');
+// ws.onmessage = function(event) 
+// {
+//     let svgLst = document.getElementById('recentAddedLst');
 
-    event.preventDefault();
-};
+//     event.preventDefault();
+// };
