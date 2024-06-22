@@ -9,6 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 let fastApi_url = "http://127.0.0.1:8000";
+let ws_fastpi_url = "ws://127.0.0.1:8000/ws";
 // Klasa price która będzie nam aktualizaować cenę i pamiętać ją
 class Prices {
     constructor() {
@@ -79,7 +80,7 @@ function connectToSocket() {
     if (btn) {
         btn.remove();
     }
-    let ws = new WebSocket(`ws://127.0.0.1:8000/ws`);
+    let ws = new WebSocket(ws_fastpi_url);
     ws.onmessage = function (event) {
         event.preventDefault();
         let data = JSON.parse(event.data);

@@ -1,4 +1,5 @@
 let fastApi_url = "http://127.0.0.1:8000"
+let ws_fastpi_url = "ws://127.0.0.1:8000/ws"
 
 // Klasa price która będzie nam aktualizaować cenę i pamiętać ją
 class Prices
@@ -103,7 +104,7 @@ function connectToSocket()
         btn.remove();
     }
 
-    let ws = new WebSocket(`ws://127.0.0.1:8000/ws`);
+    let ws = new WebSocket(ws_fastpi_url);
 
 
     ws.onmessage = function(event) 
