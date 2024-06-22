@@ -82,49 +82,98 @@ async function fetch_price_from_fastApi()
 
 fetch_price_from_fastApi();
 
+let i_closed_ws = false;
 
-let ws = new WebSocket(`ws://127.0.0.1:8000/ws`);
 
-interface ExpectedDataFormat
+function handle_button_making(msg: string)
 {
-    value: number;
-    method: string;
+    let refresh_btn = document.createElement("button");
+    refresh_btn.innerText = msg;
+    refresh_btn.setAttribute("id", "refresh_btn");
+    refresh_btn.onclick = connectToSocket;
+    document.body.appendChild(refresh_btn);
 }
 
 
-ws.onmessage = function(event) 
+function connectToSocket()
 {
-    event.preventDefault();
-    let data = JSON.parse(event.data);
-
-    if ("value" in data && "method" in data)
+    let btn = document.getElementById("refresh_btn");
+    if (btn)
     {
-        let value = parseFloat(data["value"]);
-        let method = data["method"];
+        btn.remove();
+    }
 
-        if (method === "multiply")
+    let ws = new WebSocket(`ws://127.0.0.1:8000/ws`);
+
+
+    ws.onmessage = function(event) 
+    {
+        event.preventDefault();
+        let data = JSON.parse(event.data);
+
+        try 
         {
-            curr_price_obj.change_price(value, true);
-            display_price_in_html_file(curr_price_obj.price);
+            if ("value" in data && "method" in data)
+            {
+                let value = parseFloat(data["value"]);
+
+                if (isNaN(value))
+                {
+                    throw new Error("ERROR: recv val form socket is not a number");
+                }
+                else 
+                {
+                    let method = data["method"];
+
+                    if (method === "multiply")
+                    {
+                        curr_price_obj.change_price(value, true);
+                        display_price_in_html_file(curr_price_obj.price);
+                    }
+                    else if (method === "divide")
+                    {
+                        curr_price_obj.change_price(value, false);
+                        display_price_in_html_file(curr_price_obj.price);
+                    }
+                    else 
+                    {
+                        throw new Error("ERROR: wrong method name");
+                    }
+                }
+
+            }
+            else 
+            {
+                throw new Error("Error: wrong data format");
+            }
         }
-        else if (method === "divide")
+        catch (error: any)
         {
-            curr_price_obj.change_price(value, false);
-            display_price_in_html_file(curr_price_obj.price);
+            // Wyswietlamy error tam gdzie wyswietlalismy cene
+            let price_div = document.getElementById("price_div")!;
+            price_div.innerText = error.message;
+
+            handle_button_making("Refresh button");
+            i_closed_ws = true;
+            ws.close();
+        }
+    };
+
+    ws.onclose = function(event)
+    {
+        if (!i_closed_ws)
+        {
+            let price_div = document.getElementById("price_div")!;
+            price_div.innerText = "Connection closed by server";
+            handle_button_making("Reconnect?");
         }
         else 
         {
-            console.log("Error: unknown method");
+            i_closed_ws = false;
         }
-    }
-    else 
-    {
-        console.log("Error: wrong data format");
-    }
-};
+    };
 
-ws.onclose = function(event)
-{
-    console.log("Connection closed");
-    console.log("event code, reason: ", event.code, event.reason);
-};
+}
+
+connectToSocket();
+
